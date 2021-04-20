@@ -35,11 +35,20 @@ operación solicitada
 """
 
 def printMenu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Reproducciones por rango de característica")
+    print("3- Música para festejar")
+    print("4- Música para estudiar")
+    print("5- Canciones y artistas por géneros")
+    print("6- Género más escuchado en un tiempo")
+    print("Presione cualquier otra tecla para salir")
 
 catalog = None
+
+
+def initCatalog():
+    return controller.initCatalog()
 
 """
 Menu principal
@@ -49,10 +58,24 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog = initCatalog()
 
     elif int(inputs[0]) == 2:
         pass
 
+    elif int(inputs[0]) == 3:
+        pass
+
+    elif int(inputs[0]) == 4:
+        pass
+
+    elif int(inputs[0]) == 5:
+        pass
+
+    elif int(inputs[0]) == 6:
+        pass
+
     else:
+        catalog.clear()
         sys.exit(0)
 sys.exit(0)

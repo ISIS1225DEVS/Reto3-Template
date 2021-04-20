@@ -38,6 +38,10 @@ los mismos.
 """
 
 # Construccion de modelos
+def initCatalog():
+    catalog = {}
+
+    return catalog
 
 # Funciones para agregar informacion al catalogo
 

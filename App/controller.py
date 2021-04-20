@@ -29,7 +29,9 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo de libros
+# Inicialización del Catálogo de canciones
+def initCatalog():
+    return model.initCatalog()
 
 # Funciones para la carga de datos
 
