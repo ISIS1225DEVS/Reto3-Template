@@ -61,7 +61,9 @@ while True:
         catalog = initCatalog()
 
     elif int(inputs[0]) == 2:
-        pass
+        characteristic = input("Nombre de la característica de contenido: ")
+        minrange = input("Valor mínimo de la característica: ")
+        toprange = input("Valor máximo de la característica: ")
 
     elif int(inputs[0]) == 3:
         pass
