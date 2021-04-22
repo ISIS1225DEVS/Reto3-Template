@@ -33,7 +33,12 @@ El controlador se encarga de mediar entre la vista y el modelo.
 def initCatalog():
     return model.initCatalog()
 
+
 # Funciones para la carga de datos
+def loadData(catalog):
+    featuresfile = cf.data_dir + "context_content_features-small.csv"
+    input_file = csv.DictReader(open(featuresfile, encoding='utf-8'))
+
 
 # Funciones de ordenamiento
 

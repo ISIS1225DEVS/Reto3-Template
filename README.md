@@ -1,3 +1,6 @@
+Req. 2 - David Leonardo Almanza Márquez, d.almanza@uniandes.edu.co, 202011293
+Req. 3 - Laura Daniela Arias Flórez, l.ariasf@uniandes.edu.co, 202020621
+
 #ISIS1225 - Librerias de soporte
 
 Este proyecto contiene los Tipos abstractos de datos, estructuras de datos y algoritmos requeridos por el curso ISIS1225-Estructuras de Datos y Algoritmos
