@@ -28,6 +28,7 @@
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
@@ -38,6 +39,16 @@ los mismos.
 """
 
 # Construccion de modelos
+def newAnalyzer():
+
+    analyzer = {'altura': None,
+                'elementos': None
+                }
+
+    analyzer['altura'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['elementos'] = om.newMap(omaptype='BST',
+                                      comparefunction=compareElements)
+    return analyzer
 
 # Funciones para agregar informacion al catalogo
 
@@ -48,3 +59,26 @@ los mismos.
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 # Funciones de ordenamiento
+
+def compareIds(id1, id2):
+    """
+    Compara dos crimenes
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
+
+def compareElements(ele1, ele2):
+    """
+    Compara dos fechas
+    """
+    if (ele1 == ele2):
+        return 0
+    elif (ele1 > ele2):
+        return 1
+    else:
+        return -1
