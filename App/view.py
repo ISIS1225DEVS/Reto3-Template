@@ -43,10 +43,11 @@ operación solicitada
 """
 
 def printMenu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Requerimiento 1")
-    print("3 - Informacion del arbol")
+    print("3- Informacion del arbol")
+    print("2- Reproducciones por rango de característica")
     print("4- Música para festejar")
     print("5- Música para estudiar")
     print("6- Canciones y artistas por géneros")
