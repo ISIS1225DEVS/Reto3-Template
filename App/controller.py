@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from DISClib.ADT import list as lt
 import config as cf
 import model
 import csv
@@ -30,9 +31,38 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
+def init():
+    database = model.newdatabase()
+    return database
 
 # Funciones para la carga de datos
+
+def loadevent(database):
+    videosfile = cf.data_dir + 'context_content_features-small.csv'
+    input_file = csv.DictReader(open(videosfile, encoding='utf-8'))
+    for event in input_file:
+        model.addevent(database, event)
+    return database
+
+def loadRBT(database, characteristic):
+    map = database['contendindex']
+    lst = database['songs']
+    for event in lt.iterator(lst):
+        model.loadRBT(map, event, characteristic.lower().strip())
+    return database
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+
+def indexHeight(database):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight(database)
+
+def indexSize(database):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSize(database)
