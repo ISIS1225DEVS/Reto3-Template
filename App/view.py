@@ -26,7 +26,15 @@ import controller
 from DISClib.ADT import list as lt
 assert cf
 
-
+#-----------------------------------
+#Ruta a los archivos
+#-----------------------------------
+#context_content_features-small.csv
+songFile = 'context_content_features-small.csv'
+cont = None
+#-----------------------------------
+#Menu
+#-----------------------------------
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -35,20 +43,15 @@ operación solicitada
 """
 
 def printMenu():
-    print("\nBienvenido")
+    print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- Reproducciones por rango de característica")
-    print("3- Música para festejar")
-    print("4- Música para estudiar")
-    print("5- Canciones y artistas por géneros")
-    print("6- Género más escuchado en un tiempo")
+    print("2- Requerimiento 1")
+    print("3 - Informacion del arbol")
+    print("4- Música para festejar")
+    print("5- Música para estudiar")
+    print("6- Canciones y artistas por géneros")
+    print("7- Género más escuchado en un tiempo")
     print("Presione cualquier otra tecla para salir")
-
-catalog = None
-
-
-def initCatalog():
-    return controller.initCatalog()
 
 """
 Menu principal
@@ -57,27 +60,24 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
+        cont = controller.init()
+        controller.loadData(cont, songFile)
         print("Cargando información de los archivos ....")
-        catalog = initCatalog()
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 2:
-        characteristic = input("Nombre de la característica de contenido: ")
-        minrange = input("Valor mínimo de la característica: ")
-        toprange = input("Valor máximo de la característica: ")
-
+        print("buscando artistas en un rango de instrumentalness")
+        initialInstru = float(input("limite inferior: "))
+        finalInstru = float(input("limite superior: "))
+        print(finalInstru)
+        retorno = controller.Requerimiento1(cont, initialInstru, finalInstru)
+        print('numero de artistas: ', retorno[0], '   \nnumero de visualizaciones: ', retorno[1])
     elif int(inputs[0]) == 3:
-        pass
-
-    elif int(inputs[0]) == 4:
-        pass
-
-    elif int(inputs[0]) == 5:
-        pass
-
-    elif int(inputs[0]) == 6:
-        pass
-
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))        
     else:
-        catalog.clear()
         sys.exit(0)
 sys.exit(0)
