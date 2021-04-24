@@ -79,5 +79,7 @@ def maxKey(analyzer):
     return model.maxKey(analyzer)
 
 
-def Requerimiento1(analyzer, initialInstru, finalInstru):
-    return model.Requerimiento1(analyzer, initialInstru, finalInstru)
+def Requerimiento1(analyzer, initialInstru, finalInstru, caract):
+    return model.Requerimiento1(analyzer, initialInstru, finalInstru, caract)
+def Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance):
+    return model.Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance)
