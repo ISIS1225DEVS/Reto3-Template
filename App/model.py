@@ -57,18 +57,12 @@ def newAnalyzer():
 # Funciones para agregar informacion al catalogo
 def add_song(analyzer, song):
     lt.addLast(analyzer["songs"], song)
-    updateIndex(analyzer["instrumentalness"], song, "instrumentalness")
-    updateIndex(analyzer["acousticness"], song, "acousticness")
-    updateIndex(analyzer["liveness"], song, "liveness")
-    updateIndex(analyzer["speechiness"], song, "speechiness")
-    updateIndex(analyzer["energy"], song, "energy")
-    updateIndex(analyzer["danceability"], song, "danceability")
-    updateIndex(analyzer["valence"], song, "valence")
     return analyzer
 
 def createIndex(analyzer, caract):
     for song in lt.iterator(analyzer["songs"]):
         updateIndex(analyzer[caract], song, caract)
+    return analyzer
 
 def updateIndex(map, song, caract):
     instrumentalness = float(song[caract])
@@ -126,7 +120,8 @@ def newSongIdEntry(songId):
 
 # Funciones de consulta
 def Requerimiento1(analyzer, initialInstru, finalInstru, caract):
-
+    if(om.size(analyzer[caract]) == 0):
+        createIndex(analyzer, caract)
     lst = om.values(analyzer[caract], initialInstru, finalInstru)
     totArtists = 0
     totRepros = 0
@@ -138,9 +133,12 @@ def Requerimiento1(analyzer, initialInstru, finalInstru, caract):
     return totArtists, totRepros, totPistasUnicas
 
 def Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance):
+    createIndex(analyzer, 'energy')
+    createIndex(analyzer, 'danceability')
     lstEnergy = om.values(analyzer["energy"], menorEnergy, mayorEnergy)
     lstDance = om.values(analyzer['danceability'], menorDance, mayorDance)
     lstEnergySongs = 0
+
 
 def crimesSize(analyzer):
     """
