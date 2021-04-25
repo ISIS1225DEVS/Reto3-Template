@@ -88,6 +88,8 @@ while True:
         minvalue = input(' ---> Valor minimo de la caracteristica del contenido: ')
         maxvalue = input(' ---> Valor maximo de la caracteristica del contenido : ')
         mapRBT = controller.loadRBT(database, characteristic)
+        database['songs'] = None
+        print(database['songs'])
         print("\n")
         print('++++++ Req No. 1 results... ++++++')
         print(' >>> Altura del arbol: ' + str(controller.indexHeight(database)))
