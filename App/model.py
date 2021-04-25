@@ -26,7 +26,7 @@
 
 
 
-from typing import final
+
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -44,14 +44,14 @@ los mismos.
 # Construccion de modelos
 def newAnalyzer():
     analyzer = {"songs":None, "instrumentalness":None}
-    analyzer["songs"] = lt.newList("ARRAY_LIST")
-    analyzer["instrumentalness"] = om.newMap(omaptype="RBT", comparefunction=compareFunction)
-    analyzer["acousticness"] = om.newMap(omaptype='RBT', comparefunction=compareFunction)
-    analyzer["liveness"] = om.newMap(omaptype='RBT', comparefunction=compareFunction)
-    analyzer["speechiness"] = om.newMap(omaptype='RBT', comparefunction=compareFunction)
-    analyzer["energy"] = om.newMap(omaptype='RBT', comparefunction=compareFunction)
-    analyzer["danceability"] = om.newMap(omaptype='RBT', comparefunction=compareFunction)
-    analyzer["valence"] = om.newMap(omaptype='RBT', comparefunction=compareFunction)
+    analyzer["songs"] = lt.newList("ARRAY_LIST", cmpfunction=compareTrackId)
+    analyzer["instrumentalness"] = om.newMap(omaptype="RBT", comparefunction=compareeFunction)
+    analyzer["acousticness"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
+    analyzer["liveness"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
+    analyzer["speechiness"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
+    analyzer["energy"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
+    analyzer["danceability"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
+    analyzer["valence"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
     return analyzer
 
 # Funciones para agregar informacion al catalogo
@@ -100,7 +100,7 @@ def addInstruIndex(instruEntry, song):
 def newDataEntry(song):
     entry = {"ArtistIndex": None, "lstSongs":None, 'songIdIndex':None}
     entry["ArtistIndex"] = mp.newMap(maptype="CHAINING", comparefunction=compareArtistId)
-    entry["lstSongs"] = lt.newList("ARRAY_LIST", compareFunction)
+    entry["lstSongs"] = lt.newList("ARRAY_LIST" , cmpfunction=compareTrackId)
     entry['songIdIndex'] = mp.newMap(maptype='CHAINING', comparefunction=compareSongId)
     return entry
 
@@ -133,13 +133,34 @@ def Requerimiento1(analyzer, initialInstru, finalInstru, caract):
     return totArtists, totRepros, totPistasUnicas
 
 def Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance):
-    createIndex(analyzer, 'energy')
-    createIndex(analyzer, 'danceability')
+    if(om.size(analyzer['energy']) == 0):
+        createIndex(analyzer, 'energy')
+        print('RBT de Energy creado')
+    else:
+        print('RBT de Energy ya existe')
+    if(om.size(analyzer['danceability']) == 0):
+        createIndex(analyzer, 'danceability')
+        print('RBT de Energy creado')
+    else:
+        print('RBT de danceability ya existe')
+    
     lstEnergy = om.values(analyzer["energy"], menorEnergy, mayorEnergy)
     lstDance = om.values(analyzer['danceability'], menorDance, mayorDance)
-    lstEnergySongs = 0
 
+    lstEnergyDance = lt.newList(datastructure='ARRAY_LIST',  cmpfunction=compareTrackId)
 
+    for lstDan in lt.iterator(lstDance):
+        for lst in lt.iterator(lstEnergy):
+            for songId in lt.iterator(mp.keySet(lstDan['songIdIndex'])):
+                esta1= 0
+                if(mp.contains(lst['songIdIndex'], songId)==True):
+                    esta1 = 1
+                if esta1 == 1:
+                    lt.addLast(lstEnergyDance, songId)
+
+    return print(lt.size(lstEnergyDance))
+            
+    
 def crimesSize(analyzer):
     """
     Número de crimenes
@@ -180,20 +201,17 @@ def maxKey(analyzer):
 
     
 # Funciones utilizadas para comparar elementos dentro de una lista
-def compareFunction(ins1, ins2):
+def compareeFunction(ins1, ins2):
     if (ins1 == ins2):
         return 0
     elif (ins1 > ins2):
         return 1
     else:
         return -1 
-def compareAcousticness(data1, data2):
-    if(data1 == data2):
-        return 0
-    elif(data1 > data2):
-        return 1
-    else:
-        return -1
+
+def compareTrackId(song1, song2):
+    return song1['track_id'], song2['track_id']
+
 def compareArtistId(id1, id2):
     Artist = me.getKey(id2)
     if (id1 == Artist):
