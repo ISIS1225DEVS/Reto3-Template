@@ -26,9 +26,9 @@
 
 import config
 from DISClib.ADT import graph as g
-from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import queue
 from DISClib.ADT import map as map
+from DISClib.ADT import list as lt
 from DISClib.ADT import stack
 from DISClib.Utils import error as error
 assert config
@@ -84,9 +84,7 @@ def bfsVertex(search, graph, source):
             vertex = queue.dequeue(adjsqueue)
             visited_v = map.get(search['visited'], vertex)['value']
             adjslst = g.adjacents(graph, vertex)
-            adjslstiter = it.newIterator(adjslst)
-            while (it.hasNext(adjslstiter)):
-                w = it.next(adjslstiter)
+            for w in lt.iterator(adjslst):
                 visited_w = map.get(search['visited'], w)
                 if visited_w is None:
                     dist_to_w = visited_v['distTo'] + 1

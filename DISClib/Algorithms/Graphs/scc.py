@@ -25,7 +25,7 @@
  """
 
 import config
-from DISClib.DataStructures import listiterator as it
+from DISClib.ADT import list as lt
 from DISClib.ADT import graph as g
 from DISClib.ADT import stack
 from DISClib.Algorithms.Graphs import dfo
@@ -95,9 +95,7 @@ def sccCount(graph, scc, vert):
         map.put(scc['marked'], vert, True)
         map.put(scc['idscc'], vert, scc['components'])
         lstadjacents = g.adjacents(graph, vert)
-        adjiterator = it.newIterator(lstadjacents)
-        while it.hasNext(adjiterator):
-            adjvert = it.next(adjiterator)
+        for adjvert in lt.iterator(lstadjacents):
             if not map.contains(scc['marked'], adjvert):
                 sccCount(graph, scc, adjvert)
         return scc
@@ -144,18 +142,12 @@ def reverseGraph(graph):
                               )
 
         lstvert = g.vertices(graph)
-        itervert = it.newIterator(lstvert)
-        while it.hasNext(itervert):
-            vert = it.next(itervert)
+        for vert in lt.iterator(lstvert):
             g.insertVertex(greverse, vert)
 
-        itervert = it.newIterator(lstvert)
-        while it.hasNext(itervert):
-            vert = it.next(itervert)
+        for vert in lt.iterator(lstvert):
             lstadj = g.adjacents(graph, vert)
-            iteradj = it.newIterator(lstadj)
-            while it.hasNext(iteradj):
-                adj = it.next(iteradj)
+            for adj in lt.iterator(lstadj):
                 g.addEdge(greverse, adj, vert)
         return greverse
     except Exception as exp:

@@ -25,7 +25,7 @@
  """
 
 import config
-from DISClib.DataStructures import listiterator as it
+from DISClib.ADT import list as lt
 from DISClib.ADT import graph as g
 from DISClib.ADT import queue
 from DISClib.ADT import stack
@@ -50,9 +50,7 @@ def DepthFirstOrder(graph):
                                       comparefunction=graph['comparefunction']
                                       )
         lstvert = g.vertices(graph)
-        vertiterator = it.newIterator(lstvert)
-        while it.hasNext(vertiterator):
-            vertex = it.next(vertiterator)
+        for vertex in lt.iterator(lstvert):
             if not (map.contains(search['marked'], vertex)):
                 dfsVertex(graph, search, vertex)
         return search
@@ -76,9 +74,7 @@ def dfsVertex(graph, search, vertex):
         queue.enqueue(search['pre'], vertex)
         map.put(search['marked'], vertex, True)
         lstadjacents = g.adjacents(graph, vertex)
-        adjiterator = it.newIterator(lstadjacents)
-        while it.hasNext(adjiterator):
-            adjvert = it.next(adjiterator)
+        for adjvert in lt.iterator(lstadjacents):
             if not map.contains(search['marked'], adjvert):
                 dfsVertex(graph,
                           search,
