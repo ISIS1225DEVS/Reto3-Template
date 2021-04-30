@@ -29,57 +29,49 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo
-def init():
-    analyzer = model.newAnalyzer()
-    return analyzer
+# Inicialización del Catálogo de canciones
+def initCatalog():
+    return model.initCatalog()
+
+
 # Funciones para la carga de datos
-def loadData(analyzer, songsfile):
-    songsfile = cf.data_dir + songsfile
-    input_file = csv.DictReader(open(songsfile, encoding="utf-8"), delimiter=",")
-    for song in input_file:
-        model.add_song(analyzer, song)
-    return analyzer
+def loadData(catalog):
+    loadGenres(catalog)
+    loadFeatures(catalog)
+    
+
+def loadGenres(catalog):
+    genres = [("Reggae", 60, 90),
+              ("Down-tempo", 70, 100),
+              ("Chill-out", 90, 120),
+              ("Hip-hop", 85, 115),
+              ("Jazz and Funk", 120, 125),
+              ("Pop", 100, 130),
+              ("R&B", 60, 80),
+              ("Rock", 110, 140),
+              ("Metal", 100, 160)]
+    for genre in genres:
+        model.addGenre(catalog, genre[0], genre[1], genre[2])
+
+
+def addUserGenre(catalog, genrename, mintempo, maxtempo):
+    model.addUserGenre(catalog, genrename, mintempo, maxtempo)
+
+
+def loadFeatures(catalog):
+    featuresfile = cf.data_dir + "context_content_features-small.csv"
+    input_file = csv.DictReader(open(featuresfile, encoding='utf-8'))
+    for event in input_file:
+        model.assignGenre(catalog, event)
+        model.addEvent(catalog, event)
+
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
-
-def crimesSize(analyzer):
-    """
-    Numero de crimenes leidos
-    """
-    return model.crimesSize(analyzer)
+def getStudyMusic(mininst, maxinst, mintempo, maxtempo):
+    model.getStudyMusic(mininst, maxinst, mintempo, maxtempo)
 
 
-def indexHeight(analyzer):
-    """
-    Altura del indice (arbol)
-    """
-    return model.indexHeight(analyzer)
-
-
-def indexSize(analyzer):
-    """
-    Numero de nodos en el arbol
-    """
-    return model.indexSize(analyzer)
-
-
-def minKey(analyzer):
-    """
-    La menor llave del arbol
-    """
-    return model.minKey(analyzer)
-
-
-def maxKey(analyzer):
-    """
-    La mayor llave del arbol
-    """
-    return model.maxKey(analyzer)
-
-
-def Requerimiento1(analyzer, initialInstru, finalInstru, caract):
-    return model.Requerimiento1(analyzer, initialInstru, finalInstru, caract)
-def Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance):
-    return model.Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance)
+def getGenreReproductions(catalog, genrename):
+    pass

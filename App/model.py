@@ -25,15 +25,11 @@
  """
 
 
-
-
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
-from DISClib.ADT import orderedmap as om
-
 assert cf
 
 """
@@ -42,190 +38,65 @@ los mismos.
 """
 
 # Construccion de modelos
-def newAnalyzer():
-    analyzer = {"songs":None, "instrumentalness":None}
-    analyzer["songs"] = lt.newList("ARRAY_LIST", cmpfunction=compareTrackId)
-    analyzer["instrumentalness"] = om.newMap(omaptype="RBT", comparefunction=compareeFunction)
-    analyzer["acousticness"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
-    analyzer["liveness"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
-    analyzer["speechiness"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
-    analyzer["energy"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
-    analyzer["danceability"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
-    analyzer["valence"] = om.newMap(omaptype='RBT', comparefunction=compareeFunction)
-    return analyzer
+def initCatalog():
+    catalog = {'events': None,
+               'content_features': None,
+               'sentiment_values': None,
+               'listening_events': None,
+               'genres': None}
+    
+    catalog['events'] = lt.newList('ARRAY_LIST')
+    catalog['content_features'] = mp.newMap(20, maptype='PROBING', loadfactor=0.5)
+    catalog['sentiment_values'] = mp.newMap()
+    catalog['listening_events'] = mp.newMap()
+    catalog['genres'] = mp.newMap(10, maptype='PROBING', loadfactor=0.5)
+
+    return catalog
+
 
 # Funciones para agregar informacion al catalogo
-def add_song(analyzer, song):
-    lt.addLast(analyzer["songs"], song)
-    return analyzer
-
-def createIndex(analyzer, caract):
-    for song in lt.iterator(analyzer["songs"]):
-        updateIndex(analyzer[caract], song, caract)
-    return analyzer
-
-def updateIndex(map, song, caract):
-    instrumentalness = float(song[caract])
-    entry = om.get(map, instrumentalness)
-    if entry is None:
-        instruEntry = newDataEntry(song)
-        om.put(map, instrumentalness, instruEntry)
-    else:
-        instruEntry = me.getValue(entry)
-    addInstruIndex(instruEntry, song)
-    return map
-
-def addInstruIndex(instruEntry, song):
-    lst = instruEntry["lstSongs"]
-    lt.addLast(lst, song)
-    ArtistIndex = instruEntry["ArtistIndex"]
-    SongIdIndex = instruEntry["songIdIndex"]
-    ArtistEntry = mp.get(ArtistIndex, song["artist_id"])
-    SongIdEntry = mp.get(SongIdIndex, song["track_id"])
-
-    if(SongIdEntry is None):
-        eentry = newSongIdEntry(song["track_id"])
-        mp.put(SongIdIndex, song['track_id'], eentry)
-
-    if(ArtistEntry is None):
-        entry = newArtistEntry(song["artist_id"], song)
-        lt.addLast(entry["lstSongs"], song)
-        mp.put(ArtistIndex, song["artist_id"], entry)
-    if(ArtistEntry is not None):
-        entry = me.getValue(ArtistEntry)
-        lt.addLast(entry["lstSongs"], song)
-    return instruEntry
+def addGenre(catalog, genrename, mintempo, maxtempo):
+    genre = newGenre(genrename, mintempo, maxtempo)
+    mp.put(catalog['genres'], genrename, genre)
 
 
-def newDataEntry(song):
-    entry = {"ArtistIndex": None, "lstSongs":None, 'songIdIndex':None}
-    entry["ArtistIndex"] = mp.newMap(maptype="CHAINING", comparefunction=compareArtistId)
-    entry["lstSongs"] = lt.newList("ARRAY_LIST" , cmpfunction=compareTrackId)
-    entry['songIdIndex'] = mp.newMap(maptype='CHAINING', comparefunction=compareSongId)
-    return entry
+def addUserGenre(catalog, genrename, mintempo, maxtempo):
+    genre = newGenre(genrename, mintempo, maxtempo)
+    mp.put(catalog['genres'], genrename, genre)
+    pass
 
 
-def newArtistEntry(artist_id, song):
-    sEntry = {"Artist":None, "lstSongs":None}
-    sEntry["Artist"] = artist_id
-    sEntry["lstSongs"] = lt.newList("ARRAYLIST", compareArtistId)
-    return sEntry
+def assignGenre(catalog, event):
+    for genre in lt.iterator(mp.valueSet(catalog['genres'])):
+        if float(event['tempo']) >= genre['min_tempo'] and float(event['tempo']) <= genre['max_tempo']:
+            lt.addLast(genre['events'], event)
 
-def newSongIdEntry(songId):
-    sEntry = {'songId':None}
-    sEntry["songId"] = songId
-    return sEntry
+
+def addEvent(catalog, event):
+    lt.addLast(catalog['events'], event)
+    updateFeatures(catalog['content_features'], event)
+
+
+def updateFeatures(table, event):
+    for feature in event:
+        pass
+
+
 
 # Funciones para creacion de datos
+def newGenre(name, mintempo, maxtempo):
+    genre = {'name': name.lower(),
+             'min_tempo': mintempo,
+             'max_tempo': maxtempo,
+             'events': lt.newList('ARRAY_LIST')}
+    return genre
+
 
 # Funciones de consulta
-def Requerimiento1(analyzer, initialInstru, finalInstru, caract):
-    if(om.size(analyzer[caract]) == 0):
-        createIndex(analyzer, caract)
-    lst = om.values(analyzer[caract], initialInstru, finalInstru)
-    totArtists = 0
-    totRepros = 0
-    totPistasUnicas = 0
-    for lstInstru in lt.iterator(lst):
-        totRepros += lt.size(lstInstru["lstSongs"])
-        totArtists += mp.size(lstInstru["ArtistIndex"])
-        totPistasUnicas += mp.size(lstInstru['songIdIndex'])
-    return totArtists, totRepros, totPistasUnicas
-
-def Requerimiento2(analyzer, menorEnergy, mayorEnergy, menorDance, mayorDance):
-    if(om.size(analyzer['energy']) == 0):
-        createIndex(analyzer, 'energy')
-        print('RBT de Energy creado')
-    else:
-        print('RBT de Energy ya existe')
-    if(om.size(analyzer['danceability']) == 0):
-        createIndex(analyzer, 'danceability')
-        print('RBT de Energy creado')
-    else:
-        print('RBT de danceability ya existe')
-    
-    lstEnergy = om.values(analyzer["energy"], menorEnergy, mayorEnergy)
-    lstDance = om.values(analyzer['danceability'], menorDance, mayorDance)
-
-    lstEnergyDance = lt.newList(datastructure='ARRAY_LIST',  cmpfunction=compareTrackId)
-
-    for lstDan in lt.iterator(lstDance):
-        for lst in lt.iterator(lstEnergy):
-            for songId in lt.iterator(mp.keySet(lstDan['songIdIndex'])):
-                esta1= 0
-                if(mp.contains(lst['songIdIndex'], songId)==True):
-                    esta1 = 1
-                if esta1 == 1:
-                    lt.addLast(lstEnergyDance, songId)
-
-    return print(lt.size(lstEnergyDance))
-            
-    
-def crimesSize(analyzer):
-    """
-    Número de crimenes
-    """
-    return lt.size(analyzer['songs'])
+def getStudyMusic(mininst, maxinst, mintempo, maxtempo):
+    pass
 
 
-def indexHeight(analyzer):
-    """
-    Altura del arbol
-    """
-    return om.height(analyzer['instrumentalness'])
-
-
-def indexSize(analyzer):
-    """
-    Numero de elementos en el indice
-    """
-    return om.size(analyzer['instrumentalness'])
-
-
-def minKey(analyzer):
-    """
-    Llave mas pequena
-    """
-    return om.minKey(analyzer['instrumentalness'])
-
-
-def maxKey(analyzer):
-    """
-    Llave mas grande
-    """
-    return om.maxKey(analyzer['instrumentalness'])
-
-
-
-
-
-    
 # Funciones utilizadas para comparar elementos dentro de una lista
-def compareeFunction(ins1, ins2):
-    if (ins1 == ins2):
-        return 0
-    elif (ins1 > ins2):
-        return 1
-    else:
-        return -1 
 
-def compareTrackId(song1, song2):
-    return song1['track_id'], song2['track_id']
-
-def compareArtistId(id1, id2):
-    Artist = me.getKey(id2)
-    if (id1 == Artist):
-        return 0
-    elif (id1 > Artist):
-        return 1
-    else:
-        return -1 
-def compareSongId(id1, id2):
-    songId = me.getKey(id2)
-    if (id1 == songId):
-        return 0
-    elif (id1 > songId):
-        return 1
-    else:
-        return -1   
 # Funciones de ordenamiento
