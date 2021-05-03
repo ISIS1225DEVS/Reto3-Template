@@ -52,6 +52,7 @@ def loadGenres(catalog):
               ("Metal", 100, 160)]
     for genre in genres:
         model.addGenre(catalog, genre[0], genre[1], genre[2])
+    genres.clear()
 
 
 def addUserGenre(catalog, genrename, mintempo, maxtempo):
@@ -69,8 +70,12 @@ def loadFeatures(catalog):
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
-def getStudyMusic(mininst, maxinst, mintempo, maxtempo):
-    model.getStudyMusic(mininst, maxinst, mintempo, maxtempo)
+def getCharacteristicReproductions(catalog, characteristic, minrange, toprange):
+    return model.getCharacteristicReproductions(catalog, characteristic, minrange, toprange)
+
+
+def getStudyMusic(catalog, mininst, maxinst, mintempo, maxtempo):
+    return model.getStudyMusic(catalog, mininst, maxinst, mintempo, maxtempo)
 
 
 def getGenreReproductions(catalog, genrename):

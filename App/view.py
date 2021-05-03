@@ -68,8 +68,10 @@ while True:
 
     elif int(inputs[0]) == 2:
         characteristic = input("Nombre de la característica de contenido: ")
-        minrange = float(input("Valor mínimo de la característica: "))
-        toprange = float(input("Valor máximo de la característica: "))
+        minrange = input("Valor mínimo de la característica: ")
+        toprange = input("Valor máximo de la característica: ")
+        result = controller.getCharacteristicReproductions(catalog, characteristic, minrange, toprange)
+        print("\nReproducciones totales:", result[0], "\nArtistas únicos:", result[1])
 
     elif int(inputs[0]) == 3:
         pass
@@ -79,7 +81,7 @@ while True:
         maxinst = float(input("Valor máximo de instrumentalness: "))
         mintempo = float(input("Valor mínimo de tempo: "))
         maxtempo = float(input("Valor máximo de tempo: "))
-        result = controller.getStudyMusic(mininst, maxinst, mintempo, maxtempo) 
+        result = controller.getStudyMusic(catalog, mininst, maxinst, mintempo, maxtempo) 
 
     elif int(inputs[0]) == 5:
         genreslist = input("Nombre de los géneros (separados por coma): ").lower().split(',')

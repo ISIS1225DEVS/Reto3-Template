@@ -28,6 +28,7 @@
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
@@ -79,8 +80,21 @@ def addEvent(catalog, event):
 
 def updateFeatures(table, event):
     for feature in event:
-        pass
-
+        if mp.size(table) < len(event):
+            tree = om.newMap(omaptype='RBT', comparefunction=cmpFunction)
+            valueevents = lt.newList('ARRAY_LIST')
+            lt.addLast(valueevents, event)
+            om.put(tree, event[feature], valueevents)
+            mp.put(table, feature, tree)
+        else:
+            tree = me.getValue(mp.get(table, feature))
+            if om.contains(tree, event[feature]):
+                valueevents = me.getValue(om.get(tree, event[feature]))
+                lt.addLast(valueevents, event)
+            else:
+                valueevents = lt.newList('ARRAY_LIST')
+                lt.addLast(valueevents, event)
+                om.put(tree, event[feature], valueevents)
 
 
 # Funciones para creacion de datos
@@ -93,10 +107,32 @@ def newGenre(name, mintempo, maxtempo):
 
 
 # Funciones de consulta
-def getStudyMusic(mininst, maxinst, mintempo, maxtempo):
+def getCharacteristicReproductions(catalog, characteristic, minrange, toprange):
+    tree = me.getValue(mp.get(catalog['content_features'], characteristic))
+    total = 0
+    artists = lt.newList('ARRAY')
+    for value in lt.iterator(om.values(tree, minrange, toprange)):
+        total += lt.size(value)
+        for event in lt.iterator(value):
+            if not lt.isPresent(artists, event['artist_id']):
+                lt.addLast(artists, event['artist_id'])
+    total2 = lt.size(artists)
+    artists.clear()
+    return total, total2
+
+
+def getStudyMusic(catalog, mininst, maxinst, mintempo, maxtempo):
     pass
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista
+def cmpFunction(data1, data2):
+    if data1 == data2:
+        return 0
+    elif data1 > data2:
+        return 1
+    else:
+        return -1
+
 
 # Funciones de ordenamiento
