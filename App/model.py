@@ -122,7 +122,11 @@ def getCharacteristicReproductions(catalog, characteristic, minrange, toprange):
 
 
 def getStudyMusic(catalog, mininst, maxinst, mintempo, maxtempo):
-    pass
+    insttree = me.getValue(mp.get(catalog['content_features'], 'instrumentalness'))
+    tempotree = me.getValue(mp.get(catalog['content_features'], 'tempo'))
+    instrumentals = om.values(insttree, mininst, maxinst)
+    tempos = om.values(tempotree, mintempo, maxtempo)
+    tracks = lt.newList('ARRAY_LIST')
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista
