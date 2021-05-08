@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 assert cf
 
 
@@ -46,10 +47,6 @@ def printMenu():
     print(' 6 - Req.4 --> Estudiar los generos muiscales segun su Tempo.')
     print(' 7 - Req.5 --> Conocer el genero musical mas escuchado en un rango de tiempo.')
     print(" 0 - Salir.")
-    print(" OJO    OJO    OJO    OJO ")
-    print(" al momento de calificar el reto, la opcion 1 y 2 realizan carga de datos, pero ")
-    print(" deben usar la opcion 3 para que muestre la altura y elementos de arbol, ya que ")
-    print(" asi lo pense para hacerlo mas eficiente, si algo me cuentan.")
     print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
 
@@ -87,19 +84,18 @@ while True:
         characteristic = input(' ---> Caracteristica del contenido: ')
         minvalue = input(' ---> Valor minimo de la caracteristica del contenido: ')
         maxvalue = input(' ---> Valor maximo de la caracteristica del contenido : ')
-        mapRBT = controller.loadRBT(database, characteristic)
-        database['songs'] = None
-        print(database['songs'])
+        sol = controller.Requerimiento1(database, characteristic.lower().strip(), minvalue, maxvalue)
         print("\n")
         print('++++++ Req No. 1 results... ++++++')
-        print(' >>> Altura del arbol: ' + str(controller.indexHeight(database)))
-        print(' >>> Elementos en el arbol: ' + str(controller.indexSize(database)))
-
-
-
+        #print(' >>> Altura del arbol: ' + str(controller.indexHeight(database)))
+        #print(' >>> Elementos en el arbol: ' + str(controller.indexSize(database)))
+        print(characteristic, 'is between ', minvalue, 'and' , maxvalue, 'is:')
+        print('Total of reproductions: ', sol[0])
+        print('Total of unique artists: ', sol[1])
+        
     
     # Requerimiento 2.
-    elif int(inputs[0]) == 3:
+    elif int(inputs[0]) == 4:
         print("\n")
         minvalue_energy = input('  --> Valor mínimo de la característica Energy: ')
         maxvalue_energy = input('  --> Valor máximo de la característica Energy: ')
@@ -108,24 +104,45 @@ while True:
         pass
 
     # Requerimiento 3.
-    elif int(inputs[0]) == 4:
+    elif int(inputs[0]) == 5:
         print("\n")
-        minvalue_instru = input('  --> El valor mínimo del rango para Instrumentalness.: ')
+        minvalue_instru = input('  --> El valor mínimo del rango para Instrumentalness: ')
         maxvalue_instru = input('  --> El valor máximo del rango para Instrumentalness: ')
         minvalue_tempo = input('  --> El valor mínimo del rango para el Tempo: ')
         maxvalue_tempo = input('  --> El valor máximo del rango para el Tempo: ')
-        pass
+        sol = controller.Requerimiento3(database, minvalue_instru, maxvalue_instru, minvalue_tempo, maxvalue_tempo)
+        print("\n")
+        print('++++++ Req No. 3 results... ++++++')
+        print('Instrumentalness is between', minvalue_instru, 'and', maxvalue_instru)
+        print('Tempo is between', minvalue_tempo, 'and', maxvalue_tempo)
+        print('--> Total of unique tracks in events: ',sol[0])
+        iterator = it.newIterator(sol[1])
+        number= 1
+        while (it.hasNext(iterator)) and number<6:
+            event = it.next(iterator)
+            print('Track',number,': ',event['track_id'], 'with instrumentalness of ',
+                event['instrumentalness'],'and tempo of ', event['tempo'])
+            number+=1
 
     # Requerimiento 4.
-    elif int(inputs[0]) == 5:
+    elif int(inputs[0]) == 6:
         print("\n")
-        name_genero = input('  --> Nombre para el nuevo genero musical: ')
-        minvalue_tempo = input('  --> El valor mínimo del rango para el Tempo: ')
-        maxvalue_tempo = input('  --> El valor máximo del rango para el Tempo: ')
-        pass
+        listg = input('Ingrese la lista de generos a buscar separados por coma: ')
+        condition  = input("(Si / No ) Desea agregar un nuevo Genero a la busqueda: ")
+        if (condition.lower().strip() == 'si'):
+            nameg = input('  --> Nombre para el nuevo genero musical: ')
+            minT = input('  --> El valor mínimo del rango para el Tempo: ')
+            maxT = input('  --> El valor máximo del rango para el Tempo: ')
+        
+        listg.strip().replace(' ', '')
+        listg = list(listg)
+        print(listg)
+
+        sol = controller.Requerimiento4(database, listg, nameg, minT, maxT)
+        
     
     # Requerimiento 5.
-    elif int(inputs[0]) == 6:
+    elif int(inputs[0]) == 7:
         print("\n")
         minvalue_hour = input(' --> valor mínimo de la hora del día: ')
         maxvalue_hour = input(' --> valor máximo de la hora del día: ')

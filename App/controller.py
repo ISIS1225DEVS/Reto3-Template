@@ -44,13 +44,6 @@ def loadevent(database):
         model.addevent(database, event)
     return database
 
-def loadRBT(database, characteristic):
-    map = database['contendindex']
-    lst = database['songs']
-    for event in lt.iterator(lst):
-        model.loadRBT(map, event, characteristic.lower().strip())
-    return database
-
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
@@ -66,3 +59,11 @@ def indexSize(database):
     Numero de nodos en el arbol
     """
     return model.indexSize(database)
+
+def Requerimiento1(database, characteristic, minvalue, maxvalue):
+    sol = model.Requerimiento1(database, characteristic, minvalue, maxvalue)
+    return sol 
+
+def Requerimiento3(database, minvalue_instru, maxvalue_instru, minvalue_tempo, maxvalue_tempo):
+    sol = model.Requerimiento3(database, minvalue_instru, maxvalue_instru, minvalue_tempo, maxvalue_tempo)
+    return sol 
