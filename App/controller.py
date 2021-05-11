@@ -30,9 +30,34 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
+def initAnalyzer():
+    return model.newAnalyzer
 
 # Funciones para la carga de datos
+def loadData(analyzer):
+    loadTracks(analyzer)
+    loadCaracterisiticas(analyzer)
+
+def loadTracks(analyzer):
+    tracks_file = cf.data_dir + "context_content_features-small.csv"
+    input_file = csv.DictReader(open(tracks_file, encoding='utf-8'),delimiter='\t')
+    for categoria in input_file:
+        model.addCanciones(analyzer,categoria)
+
+def loadCaracterisiticas(analyzer):
+    caracteristics_file = cf.data_dir + "context_content_features-small.csv"
+    input_file = csv.DictReader(open( caracteristics_file, encoding='utf-8'),delimiter='\t')
+    for categoria in input_file:
+        model.addCaracterisitica(analyzer,categoria)
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+
+def requerimiento1(analyzer, caracteristica, valor_min, valor_max):
+
+    return model.requerimiento1(analyzer, caracteristica, valor_min, valor_max)
+
+def requerimiento2(analyzer, min_energy, max_energy, min_danceability, max_danceability):
+
+    return model.requerimiento2(analyzer, min_energy, max_energy, min_danceability, max_danceability)
