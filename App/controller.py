@@ -38,7 +38,7 @@ def init():
 # Funciones para la carga de datos
 
 def loadevent(database):
-    videosfile = cf.data_dir + 'context_content_features-small.csv'
+    videosfile = cf.data_dir + 'context_content_features-50pct.csv'
     input_file = csv.DictReader(open(videosfile, encoding='utf-8'))
     for event in input_file:
         model.addevent(database, event)
@@ -66,4 +66,8 @@ def Requerimiento1(database, characteristic, minvalue, maxvalue):
 
 def Requerimiento3(database, minvalue_instru, maxvalue_instru, minvalue_tempo, maxvalue_tempo):
     sol = model.Requerimiento3(database, minvalue_instru, maxvalue_instru, minvalue_tempo, maxvalue_tempo)
+    return sol 
+
+def Requerimiento4(database, listg, newg, minT, maxT):
+    sol = model.Requerimiento4(database, listg, newg, minT, maxT)
     return sol 

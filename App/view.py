@@ -24,8 +24,12 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
 from DISClib.DataStructures import listiterator as it
 assert cf
+default_limit = 1000
+sys.setrecursionlimit(default_limit*1000)
 
 
 """
@@ -120,25 +124,53 @@ while True:
         number= 1
         while (it.hasNext(iterator)) and number<6:
             event = it.next(iterator)
-            print('Track',number,': ',event['track_id'], 'with instrumentalness of ',
-                event['instrumentalness'],'and tempo of ', event['tempo'])
+            print('Track',number,': ',event['track_id'], 'with instrumentalness of',
+                event['instrumentalness'],'and tempo of', event['tempo'])
             number+=1
 
     # Requerimiento 4.
     elif int(inputs[0]) == 6:
         print("\n")
+        print('Generos disponibles: ')
+        print('Reggae, Down-tempo, Chill-out, Hip-hop, Jazz-and-Funk, Pop, R&B, Rock, Metal')
+        print("\n")
         listg = input('Ingrese la lista de generos a buscar separados por coma: ')
         condition  = input("(Si / No ) Desea agregar un nuevo Genero a la busqueda: ")
         if (condition.lower().strip() == 'si'):
             nameg = input('  --> Nombre para el nuevo genero musical: ')
-            minT = input('  --> El valor mínimo del rango para el Tempo: ')
-            maxT = input('  --> El valor máximo del rango para el Tempo: ')
-        
-        listg.strip().replace(' ', '')
-        listg = list(listg)
-        print(listg)
+            minT = input('  --> El valor mínimo del rango para el Tempo(60-160): ')
+            maxT = input('  --> El valor máximo del rango para el Tempo(60-160): ')
+        else:
+            nameg = 'None'
+            minT = 0
+            maxT = 0
+            
+        listg = listg.replace(',','').lower()
+        listg = listg.split()
+        sol = controller.Requerimiento4(database, listg, nameg.lower().strip(), minT, maxT)
+        print("\n")
+        print('++++++ Req No. 4 results... ++++++')
+        print('Total of reproductions: ', sol[0])
+        for event in lt.iterator(sol[1]):
+            genre = event['genre'].upper()
+            range = event['range']
+            lstartist = mp.keySet(event['Uartist'])
+            print("                                             ")
+            print('========' ,genre, '========')
+            print('for',genre, 'the tempo is between',range[0],'and',range[1],'BPM')
+            print(genre,'reproductions:',event['rep'],'with',lt.size(lstartist),'different artists')
+            print('----- Some artists for',genre, '-----')
+            iterator = it.newIterator(lstartist)
+            number= 1
+            while (it.hasNext(iterator)) and number<11:
+                event = it.next(iterator)
+                print('Artist',number,':',event)
+                number+=1
+            
 
-        sol = controller.Requerimiento4(database, listg, nameg, minT, maxT)
+
+
+
         
     
     # Requerimiento 5.

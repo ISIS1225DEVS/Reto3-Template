@@ -31,6 +31,7 @@ from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as marg
 assert cf
 
 """
@@ -40,12 +41,22 @@ los mismos.
 
 # Construccion de modelos
 def newdatabase():
-    database = {'contendindex': None}
+    database = {'contendindex': None,
+                'genre': None}
 
     database['contendindex'] = mp.newMap(10,
                                     maptype= 'PROBING',
                                     loadfactor= 0.9,
                                     comparefunction= None)
+    database['genre'] = {'reggae':[60,90],
+                         'down-tempo':[70,100],
+                         'chill-out':[90,120], 
+                         'hip-hop':[85,115],
+                         'jazz-and-funk':[120,125], 
+                         'pop':[100,130], 
+                         'r&b':[60,80], 
+                         'rock':[110,140], 
+                         'metal':[100,160]}
     return database
                 
 
@@ -108,8 +119,8 @@ def loadRBT(RBT, information, event, characteristic):  #arbol binario
 
 def newDataEntry(event):
     entry = {'tracks': None, 'artists': None, 'events': None}
-    entry['tracks'] = lt.newList('ARRAYLIST')
-    entry['artists'] = mp.newMap(100,
+    entry['tracks'] = lt.newList('ARRAY_LIST')
+    entry['artists'] = mp.newMap(20000,  #poner 500
                                    maptype='PROBING',
                                    loadfactor=0.9,
                                    comparefunction= None)
@@ -130,8 +141,8 @@ def newRbt():
                     comparefunction= None)
     return tree
 
-def createhahstable():
-    hashtable = mp.newMap(2000,
+def createhahstable(elements):
+    hashtable = mp.newMap(elements,
                             maptype='PROBING',
                             loadfactor=0.9,
                             comparefunction= None)
@@ -142,15 +153,9 @@ def createhahstable():
 # Funciones de consulta
 
 def indexHeight(database):
-    """
-    Altura del arbol
-    """
     return om.height(database['contendindex'])
 
 def indexSize(database):
-    """
-    Numero de elementos en el indice
-    """
     return om.size(database['contendindex'])
 
 def Requerimiento1(database, characteristic, minvalue, maxvalue):
@@ -159,18 +164,13 @@ def Requerimiento1(database, characteristic, minvalue, maxvalue):
     RBT = me.getValue(RBT)
     lst = om.values(RBT, minvalue, maxvalue)
     totalevets = 0
-    maptartist = mp.newMap(2000,
-                            maptype='PROBING',
-                            loadfactor=0.9,
-                            comparefunction= None)
+    maptartist = createhahstable(20000) #poner 2000
 
     for event in lt.iterator(lst):
         totalevets += lt.size(event['tracks'])
         listartist = mp.keySet(event['artists'])
         for event in lt.iterator(listartist):
-            entry = mp.get(maptartist, event)
-            if (entry is None):
-                mp.put(maptartist, event, {})
+            countuniqueartist(maptartist, event)
 
     return totalevets, lt.size(mp.valueSet(maptartist))
 
@@ -183,26 +183,95 @@ def Requerimiento3(database, mini, maxi, mint, maxt):
     RBTT = me.getValue(RBTT)
     lstI = om.values(RBTI, mini, maxi)
     lstT = om.values(RBTT, mint, maxt)
-    mapsongs = createhahstable()
+    mapsongs = createhahstable(2000)
                     
     for event in lt.iterator(lstI):
         for event in lt.iterator(event['tracks']):
             entry = mp.get(mapsongs, event['track_id'])
             if ((entry is None) and (mini<=event['instrumentalness']<=maxi) and (mint<=event['tempo']<=maxt)):
                 mp.put(mapsongs, event['track_id'], event)
-    
+
     for event in lt.iterator(lstT):
         for event in lt.iterator(event['tracks']):
             entry = mp.get(mapsongs, event['track_id'])
             if ((entry is None) and (mini<=event['instrumentalness']<=maxi) and (mint<=event['tempo']<=maxt)):
                 mp.put(mapsongs, event['track_id'], event)
-    
     return lt.size(mp.valueSet(mapsongs)), mp.valueSet(mapsongs)
 
+
+def Requerimiento4(database, listg, newg, minT, maxT):
+    genre = database['genre'] # diccionario con los generos
+    hahstable = database['contendindex']
+    RBTT = mp.get(hahstable, 'tempo')
+    RBTT = me.getValue(RBTT)
+    maptracks = createhahstable(12)  #numeros 
+    Totalrp = findreproductions(maptracks, genre, RBTT,listg, newg, minT, maxT)
+    keys = mp.keySet(maptracks)
+    return Totalrp, mp.valueSet(maptracks)
+
+def findreproductions(maptracks,genre, RBTT,listg, newg, minT, maxT):
+    Totalrp = 0
+    for element in listg:
+        a = int((genre[element][0]))
+        b = int((genre[element][1]))
+        lstT = om.values(RBTT, a, b) #obtener los valores en cada genero recibido
+        for event in lt.iterator(lstT): #diccionario con la informacion {list, hasht}
+            Totalrp += lt.size(event['tracks'])
+            for event in lt.iterator(event['tracks']):
+                for element in listg:
+                    a = int((genre[element][0]))
+                    b = int((genre[element][1]))
+                    if (float(a)<=float(event['tempo'])<=float(b)): 
+                        countreproductions(maptracks, element, event['artist_id'], a, b)
+
+    if (newg != 'none'):
+        lstT = om.values(RBTT, minT, maxT)
+        for event in lt.iterator(lstT):
+            Totalrp += lt.size(event['tracks'])
+            for event in lt.iterator(event['tracks']):
+                for element in listg:
+                    a = int((genre[element][0]))
+                    b = int((genre[element][1]))
+                    if (float(a)<=float(event['tempo'])<=float(b)): # element es el genero 
+                        countreproductions(maptracks, element, event['artist_id'], a, b) 
+    return Totalrp
+
+
+def countuniqueartist(hahsT,event):
+    entry = mp.get(hahsT, event)
+    if (entry is None):
+        mp.put(hahsT, event, 0)
+
+def countreproductions(maptracks, element, id, a, b): #hashtable para contar repoduccciones por genero 
+    entry = mp.get(maptracks, element)
+    if (entry is None):
+        datentry = {'genre':element, 'range':(a,b), 'rep':1, 'Uartist': createhahstable(5200)}
+        countuniqueartist(datentry['Uartist'],id)
+        mp.put(maptracks, element, datentry)
+    else:
+        datentry= me.getValue(entry)
+        datentry['rep'] +=  1
+        countuniqueartist(datentry['Uartist'],id)
+        
+
+
+
+
+
+
+        
+
+
+
     
 
 
 
+
+
+
+
+    
 
 
 

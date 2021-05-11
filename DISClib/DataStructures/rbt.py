@@ -1097,6 +1097,8 @@ def removeKey(root, key, cmpfunction):
 
 
 def defaultfunction(key1, key2):
+    key1 = float(key1)
+    key2 = float(key2)
     if key1 == key2:
         return 0
     elif key1 < key2:
