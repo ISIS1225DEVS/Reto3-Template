@@ -31,6 +31,7 @@ from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as m
 import datetime
 assert cf
 
@@ -118,7 +119,15 @@ def registrosPorCiudad(catalogo,nombreCiudad):
         registros=None
     else:
         registros= me.getValue(par)
-        sa.sort(registros, cmpDatetime)
+        for i in lt.iterator(registros):
+            fecha=i["fechahora"]
+            print(str(fecha))
+        #TODO no esta ordenando bien los diccionarios#
+        registros= m.sort(registros, cmpDatetime)
+        print("after")
+        for i in lt.iterator(registros):
+            fecha=i["fechahora"]
+            print(str(fecha))
     return(registros)
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -145,7 +154,7 @@ def cmpDuracion(duracion1,duracion2):
         return -1 
 def cmpDatetime(dic1, dic2):
     """
-    Compara dos fechas
+    Compara dos diccionarios por sus fechas
     """
     date1=dic1["fechahora"]
     date2=dic2["fechahora"]

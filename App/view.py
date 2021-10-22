@@ -85,7 +85,7 @@ while True:
         nombreCiudad = input('Nombre de la ciudad a consultar\n')
         registrosCiudad= controller.registrosPorCiudad(catalogo,nombreCiudad)
         if registrosCiudad==None:
-            print("Ciudad no encotnrada")
+            print("Ciudad no encontrada")
         else:
             print("El total de avistamientos en "+ nombreCiudad+ " es: "+ str(lt.size(registrosCiudad)))
             if lt.size(registrosCiudad) <= 3:
@@ -94,9 +94,9 @@ while True:
             elif lt.size(registrosCiudad) > 3:
                 primeras= lt.subList(registrosCiudad,1,3)
                 ultimas= lt.subList(registrosCiudad,lt.size(registrosCiudad)-2,3)
-                print("Los primeros 3  registros son:")  
+                print("Los primeros 3 registros son:")  
                 printRegistro(primeras)
-                print("Los ultimas 3  registros son:") 
+                print("Los ultimao 3 registros son:") 
                 printRegistro(ultimas)
     elif int(inputs[0]) > 1:
         print("No disponible")
