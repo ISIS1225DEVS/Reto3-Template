@@ -57,7 +57,15 @@ def printMenu():
     print("5- Consultar el número de avistamientos de una zona geográfica")
     print("10-Salir ")
 
-
+#Funciones para imprimir#
+def printRegistro(lista):
+    x = PrettyTable() 
+    x.field_names = ["Fecha y hora","Ciudad", "Estado", "Pais", "Forma","Duracion (segundos)"]
+    for i in lt.iterator(lista):
+        x.add_row([str(i["fechahora"]),str(i["ciudad"]),str(i["estado"]),str(i["pais"]),
+            str(i["forma"]),str(i["duracionsegundos"])])
+        x.max_width = 20
+    print(x)
 
 """
 Menu principal
@@ -75,12 +83,21 @@ while True:
         #TODO#
     elif int(inputs[0]) == 1:
         nombreCiudad = input('Nombre de la ciudad a consultar\n')
-        registros= controller.registrosPorCiudad(catalogo,nombreCiudad)
-        if lt.size(registros)>False:
-            print("El total de avistamientos en "+ nombreCiudad+ " es: "+ str(lt.size(registros)))
+        registrosCiudad= controller.registrosPorCiudad(catalogo,nombreCiudad)
+        if registrosCiudad==None:
+            print("Ciudad no encotnrada")
         else:
-            print("No disponible")
-        pass
+            print("El total de avistamientos en "+ nombreCiudad+ " es: "+ str(lt.size(registrosCiudad)))
+            if lt.size(registrosCiudad) <= 3:
+                print("Hay 3 o menos registros, estos son:")
+                printRegistro(registrosCiudad)
+            elif lt.size(registrosCiudad) > 3:
+                primeras= lt.subList(registrosCiudad,1,3)
+                ultimas= lt.subList(registrosCiudad,lt.size(registrosCiudad)-2,3)
+                print("Los primeros 3  registros son:")  
+                printRegistro(primeras)
+                print("Los ultimas 3  registros son:") 
+                printRegistro(ultimas)
     elif int(inputs[0]) > 1:
         print("No disponible")
         pass

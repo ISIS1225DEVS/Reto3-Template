@@ -114,7 +114,11 @@ def addOrCreateListInMap(mapa, llave, elemento):
 # Funciones de consulta
 def registrosPorCiudad(catalogo,nombreCiudad):
     par= om.get(catalogo['indiceCiudad'], nombreCiudad)
-    registros= me.getValue(par)
+    if par== None:
+        registros=None
+    else:
+        registros= me.getValue(par)
+        sa.sort(registros, cmpDatetime)
     return(registros)
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -139,5 +143,17 @@ def cmpDuracion(duracion1,duracion2):
         return 1
     else:
         return -1 
+def cmpDatetime(dic1, dic2):
+    """
+    Compara dos fechas
+    """
+    date1=dic1["fechahora"]
+    date2=dic2["fechahora"]
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
 
 # Funciones de ordenamiento
