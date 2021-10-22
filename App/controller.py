@@ -30,9 +30,30 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
-
-# Funciones para la carga de datos
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    # catalog es utilizado para interactuar con el modelo
+    catalogo = model.newCatalog()
+    return catalogo
+# ___________________________________________________
+#  Funciones para la carga de datos y almacenamiento
+#  de datos en EL modelo
+# ___________________________________________________
+def loadData(catalogo, UFOfile):
+    """
+    Carga los datos de los archivos CSV en el modelo
+    """
+    UFOfile = cf.data_dir + UFOfile
+    input_file = csv.DictReader(open(UFOfile, encoding="utf-8"),
+                                delimiter=",")
+    for registro in input_file:
+        model.addRegistro(catalogo, registro)
+    return catalogo
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def registrosPorCiudad(catalogo,nombreCiudad):
+    model.registrosPorCiudad(catalogo,nombreCiudad)

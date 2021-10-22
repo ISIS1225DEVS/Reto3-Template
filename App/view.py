@@ -21,8 +21,12 @@
  """
 
 import config as cf
+import time
 import sys
 import controller
+from prettytable import PrettyTable
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import list as lt
 assert cf
 
@@ -33,17 +37,27 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
+# ___________________________________________________
+#  Ruta a los archivos
+# ___________________________________________________
+
+UFOfile = 'UFOS-utf8-small.csv'
+# ___________________________________________________
+#  Menu principal
+# ___________________________________________________
+
 
 def printMenu():
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- Consultar el número de avistamientos en una ciudad")
-    print("3- Consultar el número de avistamientos por duración")
-    print("4- Consultar el número de avistamientos por hora y minuto del día")
-    print("5- Consultar el número de avistamientos en un rango de fechas")
-    print("6- Consultar el número de avistamientos de una zona geográfica")
+    print("0- Cargar información en el catálogo")
+    print("1- Consultar el número de avistamientos en una ciudad")
+    print("2- Consultar el número de avistamientos por duración")
+    print("3- Consultar el número de avistamientos por hora y minuto del día")
+    print("4- Consultar el número de avistamientos en un rango de fechas")
+    print("5- Consultar el número de avistamientos de una zona geográfica")
+    print("10-Salir ")
 
-catalog = None
+
 
 """
 Menu principal
@@ -51,12 +65,25 @@ Menu principal
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
-    if int(inputs[0]) == 1:
+    if int(inputs[0]) == 0:
+        start_time = time.process_time()
         print("Cargando información de los archivos ....")
-
-    elif int(inputs[0]) == 2:
+        catalogo = controller.init()
+        controller.loadData(catalogo, UFOfile)
+        print("El total de avistamientos cargados:"+ str(lt.size(catalogo["registros"])))
+        print("Los primeros 5 y últimos 5 avistamientos cargados con sus características")
+        #TODO#
+    elif int(inputs[0]) == 1:
+        nombreCiudad = input('Nombre de la ciudad a consultar\n')
+        registros= controller.registrosPorCiudad(catalogo,nombreCiudad)
+        if lt.isEmpty(registros) ==False:
+            print("El total de avistamientos en"+ nombreCiudad+ " es: "+ str(lt.size(registros)))
+        else:
+            print("No disponible")
         pass
-
+    elif int(inputs[0]) >= 1:
+        print("No disponible")
+        pass
     else:
         sys.exit(0)
 sys.exit(0)
