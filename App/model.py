@@ -25,6 +25,7 @@
  """
 
 
+from typing_extensions import Concatenate
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -73,6 +74,7 @@ def addRegistro(catalogo, registro):
     dicRegistro["ciudad"]= registro["city"]
     dicRegistro["estado"]= registro["state"]
     dicRegistro["pais"]= registro["country"]
+    dicRegistro["pais-ciudad"]= (dicRegistro["pais"]) +"-"+ dicRegistro["ciudad"]
     dicRegistro["forma"]= registro["shape"]
     duracion= registro["duration (seconds)"]
     if duracion=="":
@@ -186,6 +188,23 @@ def cmpDuracion(duracion1,duracion2):
         return 1
     else:
         return -1 
+def cmpDuracionSort(dic1,dic2):
+    """
+    Compara ascendentemente por su duración y en caso de múltiples 
+    avistamientos de la misma duración,mostrarlos ordenados alfabéticamente 
+    por su combinación ciudad y país (country-city).
+    """
+    duracion1=dic1["duracion"]
+    duracion2=dic2["duracion"]
+    if (duracion1 == duracion2):
+        if dic1["pais-ciudad"] > dic2["pais-ciudad"]:
+            return 1
+        else:
+            return-1
+    elif (duracion1 > duracion2):
+        return 1
+    else:
+        return -1
 def cmpDatetime(dic1, dic2):
     """
     Compara dos diccionarios por sus fechas
