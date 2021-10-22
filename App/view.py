@@ -85,7 +85,9 @@ while True:
         printRegistro(primeras)
         print("Los ultimos 5 registros cargados son:") 
         printRegistro(ultimas)
-        #TODO#
+        stop_time = time.process_time()
+        timepaso= stop_time-start_time
+        print("Tiempo transcurrido "+ str(timepaso))
     elif int(inputs[0]) == 1:
         print("información Arbol con indice=ciudad")
         print('Altura del arbol: ' + str(controller.indexHeight(catalogo,"indiceCiudad")))
@@ -110,8 +112,13 @@ while True:
                 print("Los ultimao 3 registros son:") 
                 printRegistro(ultimas)
     elif int(inputs[0]) == 2:
-        limiteMaximo = int(input('Ingrese el límite inferior en segundos (máximo):  '))
-        limiteMinimo = int(input('Ingrese el límite superior en segundos (mínimo):  '))
+        print("información Arbol con indice=duracion")
+        print('Altura del arbol: ' + str(controller.indexHeight(catalogo,"indiceDuracion")))
+        print('Elementos en el arbol: ' + str(controller.indexSize(catalogo,"indiceDuracion")))
+        print('Menor Llave: ' + str(controller.minKey(catalogo,"indiceDuracion")))
+        print('Mayor Llave: ' + str(controller.maxKey(catalogo,"indiceDuracion")))
+        limiteMaximo = float(input('Ingrese el límite inferior en segundos (máximo):  '))
+        limiteMinimo = float(input('Ingrese el límite superior en segundos (mínimo):  '))
         registrosEnRango= controller.registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo)
         if registrosEnRango==None:
             print("Ciudad no encontrada")
@@ -126,7 +133,7 @@ while True:
                 ultimas= lt.subList(registrosEnRango,lt.size(registrosEnRango)-2,3)
                 print("Los primeros 3 registros son:")  
                 printRegistro(primeras)
-                print("Los ultimao 3 registros son:") 
+                print("Los ultimos 3 registros son:") 
                 printRegistro(ultimas)
     elif int(inputs[0]) > 1:
         print("No disponible")

@@ -82,7 +82,7 @@ def addRegistro(catalogo, registro):
     duracion= registro["duration (seconds)"]
     if duracion=="":
         duracion=0
-    dicRegistro["duracionsegundos"]= duracion
+    dicRegistro["duracionsegundos"]= float(duracion)
     dicRegistro["duracionvariable"]= registro["duration (hours/min)"]
     dicRegistro["date posted"]= datetime.datetime.strptime(registro["date posted"],'%Y-%m-%d %H:%M:%S')    
     dicRegistro["latitud"]= registro["latitude"]
@@ -90,6 +90,7 @@ def addRegistro(catalogo, registro):
 
     lt.addLast(catalogo['registros'], dicRegistro)
     updateIndiceCiudad(catalogo['indiceCiudad'], dicRegistro)
+    updateIndiceDuracion(catalogo["indiceDuracion"], dicRegistro)
     return catalogo
 
 
@@ -102,7 +103,16 @@ def updateIndiceCiudad(map, registro):
     ciudad = registro['ciudad']
     addOrCreateListInMap(map,ciudad,registro)
     return map
+def updateIndiceDuracion(map, registro):
+    """
+    Se toma la ciudad del registro y se busca si ya existe en el arbol
+    dicha  ciudad.  Si es asi, se adiciona el registro a su lista de registros.
+    Si no se encuentra creado un nodo para esa ciudad en el arbol se crea
+    """
+    duracion = registro["duracionsegundos"]
+    addOrCreateListInMap(map,duracion,registro)
 
+    return map
 def addOrCreateListInMap(mapa, llave, elemento):
     if om.contains(mapa,llave)==False:
         lista_nueva=lt.newList("ARRAY_LIST")
@@ -122,7 +132,7 @@ def addOrCreateListInMap(mapa, llave, elemento):
 # ___________________________________________________
 # Funciones de consulta
 # ___________________________________________________
-#REQ 2#
+#REQ 1#
 def registrosPorCiudad(catalogo,nombreCiudad):
     par= om.get(catalogo['indiceCiudad'], nombreCiudad)
     if par== None:
@@ -141,7 +151,15 @@ def registrosPorCiudad(catalogo,nombreCiudad):
     return(registros)
 #REQ 2#
 def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
-    return None
+    """
+    Retorna la lista de crimenes en un rango de duración.
+    """
+    listaEnRango= lt.newList("ARRAY_LIST")
+    listaDeListas = om.values(catalogo['indiceDuracion'],limiteMaximo,limiteMinimo)
+    for list in lt.iterator(listaDeListas):
+        for registro in list:
+            listaEnRango = lt.addLast(listaEnRango,registro)
+    return listaEnRango
 # ___________________________________________________
 #Funciones para consultar info om#
 # ___________________________________________________

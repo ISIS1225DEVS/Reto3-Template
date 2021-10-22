@@ -60,7 +60,7 @@ def registrosPorCiudad(catalogo,nombreCiudad):
     return registros
 #REQ2#
 def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
-    registros=model.registrosEnRangoDuración(catalogo,limiteMaximo,limiteMinimo)
+    registros=model.registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo)
     return registros
 #funciones de consulta om#
 def registrosSize(analyzer):
