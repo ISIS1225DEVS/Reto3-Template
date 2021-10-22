@@ -38,8 +38,7 @@ def init():
     catalogo = model.newCatalog()
     return catalogo
 # ___________________________________________________
-#  Funciones para la carga de datos y almacenamiento
-#  de datos en EL modelo
+#  Funciones para la carga de datos y almacenamiento de datos en EL modelo
 # ___________________________________________________
 def loadData(catalogo, UFOfile):
     """
@@ -55,8 +54,13 @@ def loadData(catalogo, UFOfile):
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+#REQ1#
 def registrosPorCiudad(catalogo,nombreCiudad):
     registros=model.registrosPorCiudad(catalogo,nombreCiudad)
+    return registros
+#REQ2#
+def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
+    registros=model.registrosEnRangoDuración(catalogo,limiteMaximo,limiteMinimo)
     return registros
 #funciones de consulta om#
 def registrosSize(analyzer):
@@ -64,7 +68,6 @@ def registrosSize(analyzer):
     Numero de registros leidos
     """
     return model.registrosSize(analyzer)
-
 
 def indexHeight(analyzer,indice):
     """

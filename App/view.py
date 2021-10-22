@@ -109,6 +109,25 @@ while True:
                 printRegistro(primeras)
                 print("Los ultimao 3 registros son:") 
                 printRegistro(ultimas)
+    elif int(inputs[0]) == 2:
+        limiteMaximo = int(input('Ingrese el límite inferior en segundos (máximo):  '))
+        limiteMinimo = int(input('Ingrese el límite superior en segundos (mínimo):  '))
+        registrosEnRango= controller.registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo)
+        if registrosEnRango==None:
+            print("Ciudad no encontrada")
+        else:
+            print("El total de avistamientos entre "+ str(limiteMinimo)+ " y "+
+                     str(limiteMaximo)+" es: "+ str(lt.size(registrosEnRango)))
+            if lt.size(registrosEnRango) <= 3:
+                print("Hay 3 o menos registros, estos son:")
+                printRegistro(registrosEnRango)
+            elif lt.size(registrosEnRango) > 3:
+                primeras= lt.subList(registrosEnRango,1,3)
+                ultimas= lt.subList(registrosEnRango,lt.size(registrosEnRango)-2,3)
+                print("Los primeros 3 registros son:")  
+                printRegistro(primeras)
+                print("Los ultimao 3 registros son:") 
+                printRegistro(ultimas)
     elif int(inputs[0]) > 1:
         print("No disponible")
         pass

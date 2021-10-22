@@ -40,8 +40,9 @@ assert cf
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
 los mismos.
 """
-
+# ___________________________________________________
 # Construccion de modelos
+# ___________________________________________________
 def newCatalog():
     """ Inicializa el analizador
 
@@ -63,8 +64,10 @@ def newCatalog():
     catalogo['indiceDuracion'] = om.newMap(omaptype='RBT',
                                       comparefunction=cmpDuracion)
     return catalogo
-
+# ___________________________________________________
 # Funciones para agregar informacion al catalogo
+# ___________________________________________________
+
 def addRegistro(catalogo, registro):
     dicRegistro ={}
     datetimeRegistro=registro["datetime"]
@@ -111,10 +114,15 @@ def addOrCreateListInMap(mapa, llave, elemento):
         lt.addLast(lista_existente,elemento)
         om.put(mapa,llave,lista_existente)
 
-
+# ___________________________________________________
 # Funciones para creacion de datos
+# ___________________________________________________
 
+
+# ___________________________________________________
 # Funciones de consulta
+# ___________________________________________________
+#REQ 2#
 def registrosPorCiudad(catalogo,nombreCiudad):
     par= om.get(catalogo['indiceCiudad'], nombreCiudad)
     if par== None:
@@ -131,13 +139,17 @@ def registrosPorCiudad(catalogo,nombreCiudad):
             fecha=i["fechahora"]
             print(str(fecha))
     return(registros)
-#Funciones para consultar info general#
+#REQ 2#
+def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
+    return None
+# ___________________________________________________
+#Funciones para consultar info om#
+# ___________________________________________________
 def registrosSize(catalogo):
     """
     Número de crimenes
     """
     return lt.size(catalogo["registros"])
-
 
 def indexHeight(catalogo, indice):
     """
@@ -145,13 +157,11 @@ def indexHeight(catalogo, indice):
     """
     return om.height(catalogo[indice])
 
-
 def indexSize(catalogo, indice):
     """
     Numero de elementos en el indice
     """
     return om.size(catalogo[indice])
-
 
 def minKey(catalogo, indice):
     """
@@ -159,13 +169,14 @@ def minKey(catalogo, indice):
     """
     return om.minKey(catalogo[indice])
 
-
 def maxKey(catalogo, indice):
     """
     Llave mas grande
     """
     return om.maxKey(catalogo[indice])
-# Funciones utilizadas para comparar elementos dentro de una lista
+# ___________________________________________________
+# Funciones utilizadas para comparar elementos dentro de una lista o mapa
+# ___________________________________________________
 
 def cmpCiudades(ciudad1,ciudad2):
     """
