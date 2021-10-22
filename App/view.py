@@ -76,14 +76,14 @@ while True:
     elif int(inputs[0]) == 1:
         nombreCiudad = input('Nombre de la ciudad a consultar\n')
         registros= controller.registrosPorCiudad(catalogo,nombreCiudad)
-        if lt.isEmpty(registros) ==False:
-            print("El total de avistamientos en"+ nombreCiudad+ " es: "+ str(lt.size(registros)))
+        if lt.size(registros)>False:
+            print("El total de avistamientos en "+ nombreCiudad+ " es: "+ str(lt.size(registros)))
         else:
             print("No disponible")
         pass
-    elif int(inputs[0]) >= 1:
+    elif int(inputs[0]) > 1:
         print("No disponible")
         pass
     else:
         sys.exit(0)
-sys.exit(0)
+

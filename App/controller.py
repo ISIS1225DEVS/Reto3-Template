@@ -56,4 +56,5 @@ def loadData(catalogo, UFOfile):
 
 # Funciones de consulta sobre el catálogo
 def registrosPorCiudad(catalogo,nombreCiudad):
-    model.registrosPorCiudad(catalogo,nombreCiudad)
+    registros=model.registrosPorCiudad(catalogo,nombreCiudad)
+    return registros
