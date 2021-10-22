@@ -58,3 +58,37 @@ def loadData(catalogo, UFOfile):
 def registrosPorCiudad(catalogo,nombreCiudad):
     registros=model.registrosPorCiudad(catalogo,nombreCiudad)
     return registros
+#funciones de consulta om#
+def registrosSize(analyzer):
+    """
+    Numero de registros leidos
+    """
+    return model.registrosSize(analyzer)
+
+
+def indexHeight(analyzer,indice):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight(analyzer,indice)
+
+
+def indexSize(analyzer,indice):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSize(analyzer,indice)
+
+
+def minKey(analyzer,indice):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey(analyzer,indice)
+
+
+def maxKey(analyzer,indice):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey(analyzer,indice)

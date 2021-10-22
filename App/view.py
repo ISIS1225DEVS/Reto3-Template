@@ -78,16 +78,27 @@ while True:
         print("Cargando información de los archivos ....")
         catalogo = controller.init()
         controller.loadData(catalogo, UFOfile)
-        print("El total de avistamientos cargados:"+ str(lt.size(catalogo["registros"])))
-        print("Los primeros 5 y últimos 5 avistamientos cargados con sus características")
+        print("El total de avistamientos cargados:"+ str(controller.registrosSize(catalogo)))
+        primeras= lt.subList(catalogo["registros"],1,5)
+        ultimas= lt.subList(catalogo["registros"],lt.size(catalogo["registros"])-4,5)
+        print("Los primeros 5 registros cargados son:")  
+        printRegistro(primeras)
+        print("Los ultimos 5 registros cargados son:") 
+        printRegistro(ultimas)
         #TODO#
     elif int(inputs[0]) == 1:
+        print("información Arbol con indice=ciudad")
+        print('Altura del arbol: ' + str(controller.indexHeight(catalogo,"indiceCiudad")))
+        print('Elementos en el arbol: ' + str(controller.indexSize(catalogo,"indiceCiudad")))
+        print('Menor Llave: ' + str(controller.minKey(catalogo,"indiceCiudad")))
+        print('Mayor Llave: ' + str(controller.maxKey(catalogo,"indiceCiudad")))
         nombreCiudad = input('Nombre de la ciudad a consultar\n')
         registrosCiudad= controller.registrosPorCiudad(catalogo,nombreCiudad)
         if registrosCiudad==None:
             print("Ciudad no encontrada")
         else:
             print("El total de avistamientos en "+ nombreCiudad+ " es: "+ str(lt.size(registrosCiudad)))
+            
             if lt.size(registrosCiudad) <= 3:
                 print("Hay 3 o menos registros, estos son:")
                 printRegistro(registrosCiudad)

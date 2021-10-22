@@ -129,6 +129,40 @@ def registrosPorCiudad(catalogo,nombreCiudad):
             fecha=i["fechahora"]
             print(str(fecha))
     return(registros)
+#Funciones para consultar info general#
+def registrosSize(catalogo):
+    """
+    Número de crimenes
+    """
+    return lt.size(catalogo["registros"])
+
+
+def indexHeight(catalogo, indice):
+    """
+    Altura del arbol
+    """
+    return om.height(catalogo[indice])
+
+
+def indexSize(catalogo, indice):
+    """
+    Numero de elementos en el indice
+    """
+    return om.size(catalogo[indice])
+
+
+def minKey(catalogo, indice):
+    """
+    Llave mas pequena
+    """
+    return om.minKey(catalogo[indice])
+
+
+def maxKey(catalogo, indice):
+    """
+    Llave mas grande
+    """
+    return om.maxKey(catalogo[indice])
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def cmpCiudades(ciudad1,ciudad2):
