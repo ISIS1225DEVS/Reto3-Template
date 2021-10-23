@@ -120,8 +120,8 @@ while True:
         limiteMaximo = float(input('Ingrese el límite inferior en segundos (máximo):  '))
         limiteMinimo = float(input('Ingrese el límite superior en segundos (mínimo):  '))
         registrosEnRango= controller.registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo)
-        if registrosEnRango==None:
-            print("Ciudad no encontrada")
+        if registrosEnRango==None or lt.size(registrosEnRango)==0:
+            print("No se encontraron avistaamientos, en este rango. Revise el orden de entrada")
         else:
             print("El total de avistamientos entre "+ str(limiteMinimo)+ " y "+
                      str(limiteMaximo)+" es: "+ str(lt.size(registrosEnRango)))

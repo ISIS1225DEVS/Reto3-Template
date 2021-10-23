@@ -155,10 +155,12 @@ def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
     Retorna la lista de crimenes en un rango de duración.
     """
     listaEnRango= lt.newList("ARRAY_LIST")
-    listaDeListas = om.values(catalogo['indiceDuracion'],limiteMaximo,limiteMinimo)
-    for list in lt.iterator(listaDeListas):
-        for registro in list:
-            listaEnRango = lt.addLast(listaEnRango,registro)
+    listaDeListas= lt.newList("ARRAY_LIST")
+    listaDeListas = om.values(catalogo['indiceDuracion'],limiteMinimo,limiteMaximo)
+    if lt.size(listaDeListas)>1:
+        for list in lt.iterator(listaDeListas):
+            for registro in lt.iterator(list):
+                lt.addLast(listaEnRango,registro)
     return listaEnRango
 # ___________________________________________________
 #Funciones para consultar info om#
