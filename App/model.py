@@ -141,13 +141,9 @@ def registrosPorCiudad(catalogo,nombreCiudad):
         registros= me.getValue(par)
         for i in lt.iterator(registros):
             fecha=i["fechahora"]
-            print(str(fecha))
-        #TODO no esta ordenando bien los diccionarios#
         registros= m.sort(registros, cmpDatetime)
-        print("after")
         for i in lt.iterator(registros):
             fecha=i["fechahora"]
-            print(str(fecha))
     return(registros)
 #REQ 2#
 def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
@@ -242,11 +238,6 @@ def cmpDatetime(dic1, dic2):
     """
     date1=dic1["fechahora"]
     date2=dic2["fechahora"]
-    if (date1 == date2):
-        return 0
-    elif (date1 > date2):
-        return 1
-    else:
-        return -1
+    return date1<date2
 
 # Funciones de ordenamiento

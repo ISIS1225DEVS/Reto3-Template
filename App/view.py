@@ -109,7 +109,7 @@ while True:
                 ultimas= lt.subList(registrosCiudad,lt.size(registrosCiudad)-2,3)
                 print("Los primeros 3 registros son:")  
                 printRegistro(primeras)
-                print("Los ultimao 3 registros son:") 
+                print("Los ultimos 3 registros son:") 
                 printRegistro(ultimas)
     elif int(inputs[0]) == 2:
         print("información Arbol con indice=duracion")
