@@ -56,6 +56,9 @@ def newCatalog():
                 'indiceCiudad': None,
                 'indiceDuracion': None,
                 'indiceHoraMinuto':None,
+                'indiceFechas':None,
+                'indiceLatitud':None,
+                'indiceLongitud':None
                 }
 
     catalogo['registros'] = lt.newList('ARRAY_LIST')
@@ -63,6 +66,14 @@ def newCatalog():
                                       comparefunction=cmpCiudades)
     catalogo['indiceDuracion'] = om.newMap(omaptype='RBT',
                                       comparefunction=cmpDuracion)
+    catalogo['indiceHoraMinuto'] = om.newMap(omaptype='RBT',
+                                      comparefunction=cmpHoraMinuto)
+    catalogo['indiceFechas'] = om.newMap(omaptype='RBT',
+                                      comparefunction=cmpFechas) 
+    catalogo['indiceLatitud'] = om.newMap(omaptype='RBT',
+                                      comparefunction=cmpLatitud) 
+    catalogo['indiceLongitud'] = om.newMap(omaptype='RBT',
+                                      comparefunction=cmpLongitud)                                                                                               
     return catalogo
 # ___________________________________________________
 # Funciones para agregar informacion al catalogo
@@ -91,6 +102,10 @@ def addRegistro(catalogo, registro):
     lt.addLast(catalogo['registros'], dicRegistro)
     updateIndiceCiudad(catalogo['indiceCiudad'], dicRegistro)
     updateIndiceDuracion(catalogo["indiceDuracion"], dicRegistro)
+    updateHoraMinuto(catalogo["indiceHoraMinuto"],dicRegistro)
+    updateFechas(catalogo["indiceFechas"],dicRegistro)
+    updateLatitud(catalogo["indiceLatitud"],dicRegistro)
+    updateLongitud(catalogo['indiceLongitud'],dicRegistro)
     return catalogo
 
 
@@ -109,10 +124,51 @@ def updateIndiceDuracion(map, registro):
     dicha  ciudad.  Si es asi, se adiciona el registro a su lista de registros.
     Si no se encuentra creado un nodo para esa ciudad en el arbol se crea
     """
-    duracion = registro["duracionsegundos"]
+    duracion = registro["fechahora"]
     addOrCreateListInMap(map,duracion,registro)
 
     return map
+def updateHoraMinuto(map, registro):
+    """
+    Se toma la ciudad del registro y se busca si ya existe en el arbol
+    dicha  ciudad.  Si es asi, se adiciona el registro a su lista de registros.
+    Si no se encuentra creado un nodo para esa ciudad en el arbol se crea
+    """
+    time=registro["fechahora"]
+    duracion=datetime.time(time.hour,time.minute)
+    addOrCreateListInMap(map,duracion,registro)
+
+def updateFechas(map, registro):
+    """
+    Se toma la ciudad del registro y se busca si ya existe en el arbol
+    dicha  ciudad.  Si es asi, se adiciona el registro a su lista de registros.
+    Si no se encuentra creado un nodo para esa ciudad en el arbol se crea
+    """
+    time=registro["fechahora"]
+    duracion=datetime.date(time.year,time.month,time.day)
+    addOrCreateListInMap(map,duracion,registro)
+    return map
+
+def updateLatitud(map, registro):
+    """
+    Se toma la ciudad del registro y se busca si ya existe en el arbol
+    dicha  ciudad.  Si es asi, se adiciona el registro a su lista de registros.
+    Si no se encuentra creado un nodo para esa ciudad en el arbol se crea
+    """
+    latitud=registro["latitud"]
+    addOrCreateListInMap(map,latitud,registro)
+    return map
+
+def updateLongitud(map, registro):
+    """
+    Se toma la ciudad del registro y se busca si ya existe en el arbol
+    dicha  ciudad.  Si es asi, se adiciona el registro a su lista de registros.
+    Si no se encuentra creado un nodo para esa ciudad en el arbol se crea
+    """
+    longitud=registro["longitud"]
+    addOrCreateListInMap(map,longitud,registro)
+    return map
+
 def addOrCreateListInMap(mapa, llave, elemento):
     if om.contains(mapa,llave)==False:
         lista_nueva=lt.newList("ARRAY_LIST")
@@ -215,6 +271,48 @@ def cmpDuracion(duracion1,duracion2):
         return 1
     else:
         return -1 
+def cmpHoraMinuto(duracion1,duracion2):
+    """
+    Compara dos fechas
+    """
+    if (duracion1 == duracion2):
+        return 0
+    elif (duracion1 > duracion2):
+        return 1
+    else:
+        return -1 
+def cmpFechas(fecha1,fecha2):
+    """
+    Compara dos fechas
+    """
+    if (fecha1 == fecha2):
+        return 0
+    elif (fecha1 > fecha2):
+        return 1
+    else:
+        return -1 
+def cmpLatitud(latitud1,latitud2):
+    """
+    Compara dos fechas
+    """
+    if (latitud1 == latitud2):
+        return 0
+    elif (latitud1 > latitud2):
+        return 1
+    else:
+        return -1 
+
+def cmpLongitud(longitud1,longitud2):
+    """
+    Compara dos fechas
+    """
+    if (longitud1 == longitud2):
+        return 0
+    elif (longitud1 > longitud2):
+        return 1
+    else:
+        return -1
+
 def cmpDuracionSort(dic1,dic2):
     """
     Compara ascendentemente por su duración y en caso de múltiples 
