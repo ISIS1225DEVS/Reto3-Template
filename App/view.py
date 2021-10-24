@@ -135,7 +135,36 @@ while True:
                 printRegistro(primeras)
                 print("Los ultimos 3 registros son:") 
                 printRegistro(ultimas)
-    elif int(inputs[0]) > 1:
+    elif int(inputs[0]) == 3:
+        inferior=input("Ingrese el limite inferior en formato HH:MM ")
+        superior=input("Ingrese el limite superior en formato HH:MM ")
+        dicRta=controller.NumAvistamientosPorHoraMinuto(catalogo,inferior,superior)
+        numAvistamientos=dicRta["avistamientos"]
+        info=dicRta['info']
+        
+        print("Hay  "+str(numAvistamientos)+" avistamientos entre "+str(inferior)+" y "+ str(superior))
+        primeros=lt.subList(info,1,3)
+        size=lt.size(info)
+        ult=lt.subList(info,size-2,3)
+        print("Los primeros 3 registros son:")
+        x = PrettyTable() 
+        x.field_names = ["Fecha y hora","Ciudad", "Estado", "Pais", "Forma","Duracion (segundos)"]
+        for i in lt.iterator(primeros):
+            x.add_row([str(i["fechahora"]),str(i["ciudad"]),str(i["estado"]),str(i["pais"]),
+            str(i["forma"]),str(i["duracionsegundos"])])
+        x.max_width = 20
+        print(x)
+        print("------------------------------")
+        print("Los ultimos 3 registros son:")
+        a = PrettyTable() 
+        a.field_names = ["Fecha y hora","Ciudad", "Estado", "Pais", "Forma","Duracion (segundos)"]
+        for i in lt.iterator(ult):
+            x.add_row([str(i["fechahora"]),str(i["ciudad"]),str(i["estado"]),str(i["pais"]),
+            str(i["forma"]),str(i["duracionsegundos"])])
+        x.max_width = 20
+        print(a)
+    
+    elif int(inputs[0]) > 4:
         print("No disponible")
         pass
     else:

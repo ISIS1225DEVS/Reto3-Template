@@ -62,6 +62,10 @@ def registrosPorCiudad(catalogo,nombreCiudad):
 def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
     registros=model.registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo)
     return registros
+#REQ3
+def NumAvistamientosPorHoraMinuto (catalogo,inferior,superior):
+    rta=model.NumAvistamientosPorHoraMinuto(catalogo,inferior,superior)
+    return(rta)
 #funciones de consulta om#
 def registrosSize(analyzer):
     """

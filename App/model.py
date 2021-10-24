@@ -26,6 +26,7 @@
 
 
 from typing_extensions import Concatenate
+from DISClib.DataStructures.bstnode import getValue
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -195,11 +196,7 @@ def registrosPorCiudad(catalogo,nombreCiudad):
         registros=None
     else:
         registros= me.getValue(par)
-        for i in lt.iterator(registros):
-            fecha=i["fechahora"]
         registros= m.sort(registros, cmpDatetime)
-        for i in lt.iterator(registros):
-            fecha=i["fechahora"]
     return(registros)
 #REQ 2#
 def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
@@ -214,6 +211,24 @@ def registrosEnRangoDuracion(catalogo,limiteMaximo,limiteMinimo):
             for registro in lt.iterator(list):
                 lt.addLast(listaEnRango,registro)
     return listaEnRango
+#REQ 3
+def NumAvistamientosPorHoraMinuto (catalogo,inferior,superior):
+    inferior= datetime.datetime.strptime(inferior,"%H:%M:%S") 
+    inferior=datetime.time(inferior.hour,inferior.minute)
+    superior=datetime.datetime.strptime(superior,"%H:%M:%S") 
+    superior=datetime.time(superior.hour,superior.minute)
+    mapMinutoHora=catalogo["indiceHoraMinuto"]
+    rangoKey=om.keys(mapMinutoHora,inferior,superior)
+    numAvistamientos=lt.size(rangoKey)
+    listaInfo=lt.newList("ARRAY_LIST")
+    for i in lt.iterator(rangoKey):
+        keyValue=om.get(mapMinutoHora,i)
+        value=me.getValue(keyValue)
+        for n in lt.iterator(value):
+            lt.addLast(listaInfo,n)
+    listaInfo=m.sort(listaInfo,cmpDatetime)
+    dicRta={'avistamientos':numAvistamientos,'info':listaInfo}
+    return(dicRta)
 # ___________________________________________________
 #Funciones para consultar info om#
 # ___________________________________________________
