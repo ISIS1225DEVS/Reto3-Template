@@ -37,7 +37,12 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Contar los avistamientos en una ciudad") #FALTA POR PENSAR
+    print("3- Contar los avistamientos por duración")#MAPA ORDENADO SEGÚN LA DURACIÓN DE LOS EVENTOS(LLAVE), DENTRO DE CADA LLAVE ESTARÁ UNA LISTA ORDENADA SEGÚN DISCORD (VER LA PREGUNTA)
+    print("4- Contar avistamientos por Hora/Minutos del día") # MAPA ORDENADO SEGÚN DATATIME(LLAVE), DENTRO DE CADA LLAVE HABRÁ UNA LISTA QUE CONTENGA LOS EVENTOS EN ESA FECHA
+    print("5- Contar los avistamientos en un rango de fechas") #USAR EL MAPA ORDENADO SEGÚN DATATIME Y LISTAR LOS DATOS REGISTRADOS SEGÚN UN RANGO DE FECHAS
+    print("6- Contar los avistamientos de una Zona Geográfica") #ESPERAR RESPUESTA DE LINDSAY
+    print("7- Visualizar los avistamientos de una zona geográfica") #MOSTRAR EN EL MAPA EL ÁREA EN EL QUE ENTRA EL RANGO 
 
 catalog = None
 
@@ -48,8 +53,17 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
-
+        catalog = controller.InitCatalog()
+        print('Se ha inicializado el Catalog_UFOS...')
+        ufofile = input("Escriba el nombre del archivo que desea cargar:\n1) small\n2) 5pct\n3) 10pct\n4) 20pct\n5) 30pct\n6) 50pct\n7) 80pct\n9) large\n")
+        if ufofile == 'small' or ufofile == 'large':
+            ufofile = 'UFOS-utf8-'+ufofile+'.csv'
+        else:
+            ufofile = 'UFOS-utf8-'+ufofile+'.csv'
+        controller.loadData(catalog,ufofile)
+        print('Se han cargado los datos...')
+        print('El número de elemenos en el arbol Datatime es:', controller.datatimesize(catalog))
+        print('El número de elemenos en el arbol Duration es:', controller.durationsize(catalog))
     elif int(inputs[0]) == 2:
         pass
 
