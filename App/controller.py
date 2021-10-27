@@ -20,19 +20,82 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+"""
+El controlador se encarga de mediar entre la vista y el modelo.
+"""
+
+#•••••••••••••••••••••••••••••••••••••••••
+#   Importaciones
+#•••••••••••••••••••••••••••••••••••••••••
+
 import config as cf
 import model
 import csv
 
 
-"""
-El controlador se encarga de mediar entre la vista y el modelo.
-"""
 
-# Inicialización del Catálogo de libros
 
+
+#•••••••••••••••••••••••••••••••••••••••••
+#   Inicializacion del catalogo
+#•••••••••••••••••••••••••••••••••••••••••
+
+def init():
+
+    analyzer = model.newAnalyzer()
+
+    return analyzer
+
+
+
+
+
+#•••••••••••••••••••••••••••••••••••••••••
 # Funciones para la carga de datos
+#•••••••••••••••••••••••••••••••••••••••••
+
+def loadData(analyzer, ufosFile):
+    """
+    Carga los datos de los archivos CSV en el modelo
+    """
+    ufosFile = cf.data_dir + ufosFile
+    input_file = csv.DictReader(open(ufosFile, encoding="utf-8"),
+                                delimiter=",")
+    for case in input_file:
+        model.addCase(analyzer, case)
+    return analyzer
+
+
+
+
+
+#•••••••••••••••••••••••••••••••••••••••••
+#Funciones de consulta
+#•••••••••••••••••••••••••••••••••••••••••
+
+def getCasesByCity(analyzer, city):
+    return model.getCasesByCity(analyzer, city)
+
+#----------------------------------------
+
+def getCasesBetweeenSeconds(analyzer, beginSeconds, endSeconds):
+    return model.getCasesBetweeenDates(analyzer, beginSeconds, endSeconds)
+
+#----------------------------------------
+
+def getCasesBetweeenHours(analyzer, beginHour, endHour):
+    return model.getCasesBetweeenHours(analyzer, beginHour, endHour)
+
+#----------------------------------------
+
+
 
 # Funciones de ordenamiento
 
-# Funciones de consulta sobre el catálogo
+
+#•••••••••••••••••••••••••••••••••••••••••
+#Funciones de consulta
+#•••••••••••••••••••••••••••••••••••••••••
+
+def getCasesSize(analyzer):
+    return model.getCasesSize(analyzer)
