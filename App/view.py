@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import orderedmap as omap
 assert cf
 
 
@@ -39,15 +40,21 @@ def printMenu():
     print("*******************************************")
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- Contar los avistamientos en una ciudad")
-    print("3- Contar los avistamientos por duración")
-    print("4- Contar los avistamientos por Hora/Minutos del día")
-    print("5- Contar los avistamientos en un rango de fechas")
-    print("6- Contar los avistamientos de una Zona Geográfica")
+    #print("2- Contar los avistamientos en una ciudad")
+    print("3- Contar los avistamientos por duración") #Desplegar datos para la opción 3
+    #print("4- Contar los avistamientos por Hora/Minutos del día")
+    #print("5- Contar los avistamientos en un rango de fechas")
+    #print("6- Contar los avistamientos de una Zona Geográfica")
     print("0- Salir")
     print("*******************************************")
 
 catalog = None
+
+def CreateCatalog():
+    return controller.CreateCatalog()
+
+def AddDates(catalog):
+    return controller.AddDates(catalog)
 
 """
 Menu principal
@@ -57,12 +64,16 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog = CreateCatalog()
+        AddDates(catalog)
+        #print(catalog)
 
     elif int(inputs[0]) == 2:
         pass
 
     elif int(inputs[0]) == 3:
-        pass
+        print("La altura del árbol es: "+str(omap.height(catalog["dates"])))
+        print("El número de elementos en el árbol es: "+str(omap.size(catalog["dates"])))
 
     elif int(inputs[0]) == 4:
         pass

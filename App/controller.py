@@ -30,8 +30,16 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
+def CreateCatalog():
+    return model.CreateCatalog() #Se llama a la función que crea el catalogo
 
 # Funciones para la carga de datos
+def AddDates(catalog):
+    #breakpoint()
+    UFOS_file = cf.data_dir + "UFOS-utf8-small.csv" #Se coloca la ruta del archivo
+    data = csv.DictReader(open(UFOS_file, encoding="utf-8"),delimiter=",") #Se lee todo el .csv
+    for sighting in data: #Por cada fila del .csv
+        model.AddDates(catalog, sighting) #Se añade las fechas
 
 # Funciones de ordenamiento
 
