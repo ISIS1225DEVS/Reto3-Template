@@ -30,9 +30,26 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 # Inicialización del Catálogo de libros
+def cargarDatos(): 
+    catalogo=model.crearCatalogo()
+    cargarCasos(catalogo)
+    cargarDatesIndex(catalogo) 
+    return catalogo 
 
 # Funciones para la carga de datos
+def cargarCasos(catalog):
+    ufofile = cf.data_dir + "UFOS/UFOS-utf8-small.csv" 
+    input_file = csv.DictReader(open(ufofile, encoding="utf-8"),
+                                delimiter=",")
+    for caso in input_file:
+        model.addCasos(catalog, caso)
+
+def cargarDatesIndex(catalog): 
+    model.addDateIndex(catalog) 
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def casosPorCiudad(catalog,ciudad):
+    listR=model.casosPorCiudad(catalog,ciudad) 
+    return listR 

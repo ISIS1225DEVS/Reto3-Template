@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from datetime import datetime
 import config as cf
 import sys
 import controller
@@ -37,7 +38,19 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Contar los avistamientos en una ciudad")
+    print("3- Contar los avistamientos por duración")
+    print("4- Contar avistamientos por Hora/Minutos del día") 
+    print("5- Contar los avistamientos en un rango de fechas") 
+    print("6- Contar los avistamientos de una Zona Geográfica")
+    print("7- Visualizar los avistamientos de una zona geográfica") 
+
+def cargarDatosCat(): 
+    catalog=controller.cargarDatos() 
+    return catalog
+def casosPorCiudad(catalog,ciudad):
+    listR=controller.casosPorCiudad(catalog,ciudad)
+    return listR    
 
 catalog = None
 
@@ -49,8 +62,38 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog=cargarDatosCat()
+        tamaño=lt.size(catalog["casos"])
+        print("El total de avistamientos cargados es: " +str(tamaño))
+        print("Los 5 primeros avistamientos son: ")
+
+        casos=(list(lt.iterator(catalog["casos"])))
+        for i in range(0,5): 
+            print ("Fecha:"+ casos[i]["datetime"]+ "|Ciudad: "+ casos[i]["city"]+ "|Shape: "+ casos[i]["shape"]+ "|Duracion: "+ casos[i]["duration (seconds)"]+ "|Comentario: "+ casos[i]["comments"])
 
     elif int(inputs[0]) == 2:
+          ciudad=input("Ingrese el nombre de la ciudad que desea consultar:")
+          listaCiudad=casosPorCiudad(catalog,ciudad)
+          print("El total de avistamientos en la ciudad de "+ ciudad+" son: "+str(len(listaCiudad)))
+          print("Los 3 primeros avistamientos son: ")
+          for i in range(0,3): 
+            print ("Fecha:"+ listaCiudad[i]["datetime"]+ "|Ciudad: "+ listaCiudad[i]["city"]+"|Pais: "+ listaCiudad[i]["country"]+"|Duracion: " + listaCiudad[i]["duration (seconds)"] + "|Forma: "+ listaCiudad[i]["shape"])
+          
+          print("Los 3 ultimos avistamientos son: ")
+          for i in range(len(listaCiudad)-3,len(listaCiudad)):  
+             print ("Fecha:"+ listaCiudad[i]["datetime"]+ "|Ciudad: "+ listaCiudad[i]["city"]+"|Pais: "+ listaCiudad[i]["country"]+"|Duracion: " + listaCiudad[i]["duration (seconds)"] + "|Forma: "+ listaCiudad[i]["shape"])
+ 
+    elif int(inputs[0]) == 3:
+        pass
+    elif int(inputs[0]) == 4:
+        pass
+    elif int(inputs[0]) == 5:
+        pass               
+    elif int(inputs[0]) == 6:
+        pass
+
+    elif int(inputs[0]) == 7:
+        
         pass
 
     else:
