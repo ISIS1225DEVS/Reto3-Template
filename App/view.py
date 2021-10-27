@@ -39,7 +39,7 @@ def printMenu():
     print("\n")
     print("*******************************************")
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
+    print("1- Cargar información en el catálogo") #Se cargan los datos del catálogo
     #print("2- Contar los avistamientos en una ciudad")
     print("3- Contar los avistamientos por duración") #Desplegar datos para la opción 3
     #print("4- Contar los avistamientos por Hora/Minutos del día")
