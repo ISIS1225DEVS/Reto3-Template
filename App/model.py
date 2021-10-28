@@ -32,16 +32,55 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
 
-"""
-Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
-los mismos.
-"""
-
 # Construccion de modelos
+
+def initCatalog():
+    """
+    Retorna un nuevo catálogo vacío
+    """
+
+    # Estructura del catálogo
+    catalog = mp.newMap()
+
+    # Definición de la estructura de datos
+    mp.put(catalog, "ufo_sightings", lt.newList())
+
+    # Resultado
+    return catalog
 
 # Funciones para agregar informacion al catalogo
 
+def addSighting(catalog, sighting):
+    """
+    Añade una observación de un UFO en el catálogo sin retornarlo
+    """
+
+    # Adición de información de la observación
+    sighting_info = newSighting(sighting)
+    
+    # Adición de la observación a la lista del catálogo
+    ufo_list = mp.get(catalog, "ufo_sightings")["value"]
+    lt.addLast(ufo_list, sighting_info)
+    mp.put(catalog, "ufo_sightings", ufo_list)
+    
+
+
 # Funciones para creacion de datos
+
+def newSighting(sighting):
+    """
+    Añade la información de una observación en una estructura de datos
+    """
+    # Estructura de datos de la observación
+    sighting_info = mp.newMap()
+
+    # Definición de llaves
+    for key, value in sighting.items():
+        mp.put(sighting_info, key, value)
+
+    # Resultado
+    return sighting_info
+
 
 # Funciones de consulta
 

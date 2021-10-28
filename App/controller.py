@@ -24,14 +24,29 @@ import config as cf
 import model
 import csv
 
+ufos_file_path = f"{cf.data_dir}/UFOS/UFOS-utf8-small.csv"
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo de libros
+# Inicialización del Catálogo
+
+def initCatalog():
+    """
+    Retorna un nuevo catálogo vacío
+    """
+    return model.initCatalog()
 
 # Funciones para la carga de datos
+
+def loadData(catalog):
+    """
+    Carga los datos en el catálogo pasado por parámetro
+    """
+    input_file = csv.DictReader(open(ufos_file_path, encoding="utf-8"))
+    for sighting in input_file:
+        model.addSighting(catalog, sighting)
 
 # Funciones de ordenamiento
 
