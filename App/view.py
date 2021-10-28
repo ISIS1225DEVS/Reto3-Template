@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import orderedmap as om
 assert cf
 
 
@@ -62,8 +63,8 @@ while True:
         print("Cargando información de los archivos ....\n")
         controller.loadData(contr)
         print("Avistamientos:", str(controller.AvistamientosSize(contr)), "\n")
-        print("Altura:", str(controller.height(cont)), "\n")
-        print("Elementos:", str(controller.size(cont)), "\n")
+        print("Altura:", str(controller.height(contr)), "\n")
+        print("Elementos:", str(controller.size(contr)), "\n")
         
     ''' 
     elif int(inputs[0]) == 3:
@@ -75,12 +76,10 @@ while True:
     elif int(inputs[0]) == 6:
 
     else:
-        sys.exit(0)
-
-         pass''' 
+        sys.exit(0)''' 
 
 
-        
+      
 sys.exit(0)
 
 
