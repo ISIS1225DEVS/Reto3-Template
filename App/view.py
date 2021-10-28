@@ -36,12 +36,15 @@ operación solicitada
 """
 
 def printMenu():
+    """
+    Imprime el menú de visualización
+    """
     print("\n")
     print("*******************************************")
     print("Bienvenido")
-    print("1- Cargar información en el catálogo") #Se cargan los datos del catálogo
-    #print("2- Contar los avistamientos en una ciudad")
-    print("3- Contar los avistamientos por duración") #Desplegar datos para la opción 3
+    print("1- Cargar información en el catálogo") # Se cargan los datos del catálogo
+    print("2- Contar los avistamientos en una ciudad")
+    print("3- Contar los avistamientos por duración") # Desplegar datos para la opción 3
     #print("4- Contar los avistamientos por Hora/Minutos del día")
     #print("5- Contar los avistamientos en un rango de fechas")
     #print("6- Contar los avistamientos de una Zona Geográfica")
@@ -51,10 +54,12 @@ def printMenu():
 catalog = None
 
 def CreateCatalog():
-    return controller.CreateCatalog()
+    """Crea el catálogo de la base de datos de UFOs
 
-def AddDates(catalog):
-    return controller.AddDates(catalog)
+    Returns:
+        dict: Crea el catálogo como un diccionario en model con la información del .csv
+    """
+    return controller.CreateCatalog()
 
 """
 Menu principal
@@ -65,11 +70,12 @@ while True:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
         catalog = CreateCatalog()
-        AddDates(catalog)
-        #print(catalog)
+        controller.AddData(catalog)
 
     elif int(inputs[0]) == 2:
-        pass
+        city = input("Ingrese la ciudad de búsqueda de interés: ")
+        print("La altura del árbol es: "+str(omap.height(catalog["cities"])))
+        print("El número de elementos en el árbol es: "+str(omap.size(catalog["cities"])))
 
     elif int(inputs[0]) == 3:
         print("La altura del árbol es: "+str(omap.height(catalog["dates"])))
