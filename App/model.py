@@ -29,9 +29,10 @@ import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
-from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as merge
 from DISClib.ADT import orderedmap as om
 import datetime
+import time
 assert cf
 
 """
@@ -41,45 +42,38 @@ los mismos.
 
 # Construccion de modelos
 def InitCatalog():
-    catalog = {'lst_UFO': None,
+    catalog = {'UFO_sightings': None,
                 'duration_UFO': None,
                 'datetime_UFO': None,
-                'Citys': None}
-    catalog['lst_UFO'] = lt.newList(datastructure='SINGLE_LINKED')
+                'cities': None}
+    catalog['UFO_sightings'] = lt.newList(datastructure='ARRAY_LIST')
     catalog['duration_UFO'] = om.newMap(omaptype='RBT')
     catalog['datetime_UFO'] = om.newMap(omaptype='RBT')
-    #TOCA CAMBIAR EL CITYS POR UN MAPA ORDENADO
-    catalog['Citys'] = mp.newMap(maptype='PROBING',
-                                loadfactor=0.4)
+    catalog['cities'] = om.newMap(omaptype="RBT")
+
     return catalog
+
 # Funciones para agregar informacion al catalogo
 def addUFO(catalog, ufo_event):
-    #CADA VEZ QUE SE ITERA EL CSV, VA A ENTRAR A LAS SIGUIENTES FUNCIONES
-    lt.addLast(catalog['lst_UFO'], ufo_event)
-    addCity(catalog['Citys'], ufo_event)
-    UpdateDuration(catalog['duration_UFO'], ufo_event)
-    UpdateDatatime(catalog['datetime_UFO'], ufo_event)
+    lt.addLast(catalog['UFO_sightings'], ufo_event)
+    updateDuration(catalog['duration_UFO'], ufo_event)
+    updateDatetime(catalog['datetime_UFO'], ufo_event)
+    addCity(catalog['cities'], ufo_event)
 
-def UpdateDuration(orderedmap, ufo_event):
-    #ESTA ES LA ESTRUCTURA PARA LAS SIGUIENTES FUNCIONES TAMBIÉN
+def updateDuration(orderedmap, ufo_event):
     #EN ESTA FUNCIÓN LA VARIABLE DURATION_EVENT TOMA LA DURACIÓN EN SEGUNDOS
     duration_event = ufo_event['duration (seconds)']
-    #PREGUNTA SI ESA DURACIÓN SE ENCUENTRA COMO LLAVE EN EL MAPA ORDENADO
     duration_entry = om.get(orderedmap, duration_event)
-    #AQUÍ PREGUNTA SI ES NONE, Y SÍ LO ES, QUE CREE UNA LISTA Y AÑADA EL EVENTO EN ESA LISTA.
     if duration_entry is None:
         duration_list = lt.newList()
         lt.addLast(duration_list, ufo_event)
-    #PARA FINALMENTE AÑADIR LA LLAVE DURATIONEVENT CON EL VALOR DE LA LISTA        
         om.put(orderedmap, duration_event, duration_list)
     else: 
-    #AQUÍ MIRA SI YA SE ENCUENTRA LA LLAVE, Y SÍ ES ASÍ, ENTONCES OBTIENE EL VALOR (QUE ES UNA LSTA) Y AÑADE EL EVENTO QUE SE ESTÁ ITERANDO
         value_entry = me.getValue(duration_entry)
         lt.addLast(value_entry, ufo_event)
     return orderedmap
 
-
-def UpdateDatatime(orderedmap, ufo_event):
+def updateDatetime(orderedmap, ufo_event):
     occurreddate = ufo_event['datetime']
     ufodate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
     time_entry = om.get(orderedmap, ufodate.date())
@@ -93,26 +87,52 @@ def UpdateDatatime(orderedmap, ufo_event):
     return orderedmap
 
 def addCity(map, ufo_event):
-    city = ufo_event['city']
-    city_entry = mp.get(map, city)
-    if (city_entry is None):
-        city_list = lt.newList()
-        lt.addLast(city_list,ufo_event)
-        mp.put(map, city, city_list)
+    city= ufo_event["city"]
+    if om.contains(map,city) == False:
+        lista_ciudad= lt.newList("ARRAY_LIST")
+        lt.addLast(lista_ciudad,ufo_event)
+        om.put(map,city,lista_ciudad)
     else:
-        value_entry = me.getValue(city_entry)
-        lt.addLast(value_entry,ufo_event)
+        lista_ciudad= om.get(map,city)["value"]
+        lt.addLast(lista_ciudad,ufo_event)
+
     return map
-
-def datatimesize(catalog):
-    return om.size(catalog['datetime_UFO'])
-
-def durationsize(catalog):
-    return om.size(catalog['duration_UFO'])
+    
 # Funciones para creacion de datos
 
 # Funciones de consulta
+def total_sightings(catalog):
+    total= lt.size(catalog["UFO_sightings"])
+    primeros5= lt.subList(catalog["UFO_sightings"],1,5)
+    ultimos5= lt.subList(catalog["UFO_sightings"],-4,5)
 
-# Funciones utilizadas para comparar elementos dentro de una lista
+    return total, primeros5, ultimos5
+
+def datetimesize(catalog): #no
+    return om.size(catalog['datetime_UFO'])
+
+def durationsize(catalog): #no
+    return om.size(catalog['duration_UFO'])
+
+def sightings_by_city(catalog,city): 
+    list_sightings_city= om.get(catalog["cities"],city)["value"]
+    merge.sort(list_sightings_city,cmpByDatetime)
+    primeros3= lt.subList(list_sightings_city,1,3)
+    ultimos3= lt.subList(list_sightings_city,-2,3)
+    
+    return om.size(catalog["cities"]),lt.size(list_sightings_city),primeros3,ultimos3
+
+def size_city_tree(catalog):
+    elementos= om.size(catalog["cities"])
+    altura= om.height(catalog["cities"])
+
+    return elementos, altura
+
+# Funciones de comparación
+def cmpByDatetime(sighting1, sighting2):
+    datetime1= time.strptime(sighting1["datetime"], "%Y-%m-%d %H:%M:%S")
+    datetime2= time.strptime(sighting2["datetime"], "%Y-%m-%d %H:%M:%S")
+    return datetime1 < datetime2
+
 
 # Funciones de ordenamiento

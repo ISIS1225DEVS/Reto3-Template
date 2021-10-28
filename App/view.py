@@ -62,11 +62,46 @@ while True:
             ufofile = 'UFOS-utf8-'+ufofile+'.csv'
         controller.loadData(catalog,ufofile)
         print('Se han cargado los datos...')
-        print('El número de elemenos en el arbol Datatime es:', controller.datatimesize(catalog))
-        print('El número de elemenos en el arbol Duration es:', controller.durationsize(catalog))
-    elif int(inputs[0]) == 2:
-        pass
+        info= controller.total_sightings(catalog)
+        print("Total de avistamientos cargados: "+ str(info[0]))
+        print("Los primeros 5 avistamientos son:")
+        print(info[1])
+        print("Los últimos 5 avistamientos son:")
+        print(info[2])
 
+    elif int(inputs[0]) == 2:
+        ciudad= input("Ingrese el nombre de la ciudad a consultar: ")
+        info= controller.sightings_by_city(catalog,ciudad)
+        print("Hay "+ str(info[0])+ " diferentes ciudades con avistamientos de UFOs...")
+        print("Hubo un total de " + str(info[1])+" avistamientos en la ciudad de "+ ciudad+ "...")
+        print("Los primeros tres avistamientos en dicha ciudad son:")
+        primeros= []
+        for sighting in lt.iterator(info[2]):
+            dict={}
+            dict["datetime"]= sighting["datetime"]
+            dict["location"]= sighting["city"] + ", "+ sighting["country"]
+            dict["duration (secs.)"]= sighting["duration (seconds)"]
+            dict["shape"]= sighting["shape"]
+            primeros.append(dict)
+        for dict in primeros:
+            print(dict)
+        print("Los últimos tres avistamientos en dicha ciudad son:")
+        ultimos= []
+        for sighting in lt.iterator(info[3]):
+            dict={}
+            dict["datetime"]= sighting["datetime"]
+            dict["location"]= sighting["city"] + ", "+ sighting["country"]
+            dict["duration (secs.)"]= sighting["duration (seconds)"]
+            dict["shape"]= sighting["shape"]
+            ultimos.append(dict)
+        for dict in ultimos:
+            print(dict)
+        print("="*40)
+        info= controller.size_city_tree(catalog)
+        print("El número de elementos dentro del árbol implementado para este requerimiento es: "+ str(info[0]))
+        print("La altura del árbol implementado para este requerimiento es: "+ str(info[1]))
+        print("="*40)
+        
     else:
         sys.exit(0)
 sys.exit(0)

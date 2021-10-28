@@ -33,6 +33,7 @@ El controlador se encarga de mediar entre la vista y el modelo.
 def InitCatalog():
     catalog = model.InitCatalog()
     return catalog
+
 # Funciones para la carga de datos
 def loadData(catalog, ufofile):
     """
@@ -43,13 +44,19 @@ def loadData(catalog, ufofile):
                                 delimiter=",")
     for ufo_event in input_file:
         model.addUFO(catalog, ufo_event)
-    return catalog
 
-def datatimesize(catalog):
-    return model.datatimesize(catalog)
 
-def durationsize(catalog):
-    return model.durationsize(catalog)
+def total_sightings(catalog):
+    info= model.total_sightings(catalog)
+    return info
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def sightings_by_city(catalog,city):
+    info= model.sightings_by_city(catalog,city)
+    return info
+
+def size_city_tree(catalog):
+    info= model.size_city_tree(catalog)
+    return info
