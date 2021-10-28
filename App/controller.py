@@ -48,6 +48,9 @@ def loadData(catalog):
     for sighting in input_file:
         model.addSighting(catalog, sighting)
 
+def contar_avistamientos(catalog, city):
+    return model.contar_avistamientos(catalog, city)
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo

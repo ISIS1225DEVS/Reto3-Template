@@ -24,14 +24,14 @@
  * Dario Correal - Version inicial
  """
 
-
+import datetime
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
-
+from DISClib.ADT import orderedmap as om
 # Construccion de modelos
 
 def initCatalog():
@@ -81,7 +81,49 @@ def newSighting(sighting):
     # Resultado
     return sighting_info
 
+def compareDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
 
+def contar_avistamientos(catalog, city):
+
+    avistamientos_ciudad= 0
+    mapa_ciudades= mp.newMap(numelements= 11, loadfactor= 8)
+    lt_ciudad= lt.newList(datastructure= "ARRAY_LIST")
+    for diccionarios in lt.iterator(mp.get(catalog, "ufo_sightings")["value"]):
+            
+        if mp.contains(mapa_ciudades, me.getValue(mp.get(diccionarios, "city"))):
+            mp.put(mapa_ciudades, me.getValue(mp.get(diccionarios, "city")), mp.get(mapa_ciudades, me.getValue(mp.get(diccionarios, "city")))["value"] +1) 
+        else:
+            mp.put(mapa_ciudades, me.getValue(mp.get(diccionarios, "city")), 1) 
+
+        if(me.getValue(mp.get(diccionarios, "city"))) == city:
+            avistamientos_ciudad +=1
+            lt.addLast(lt_ciudad, diccionarios)
+
+    total_avistamientos= mp.size(mapa_ciudades)
+    mapa= om.newMap(comparefunction= compareDates)
+    for x in lt.iterator(lt_ciudad):
+        occurreddate= mp.get(x, "datetime")["value"]
+        avistamiento= datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
+        om.put(mapa, avistamiento, x)
+            
+    max= om.maxKey(mapa)
+    min= om.minKey(mapa)
+    llaves= om.keys(mapa, min, max)
+    respuestas= lt.newList(datastructure= "ARRAY_LIST")
+    lt.addLast(respuestas, total_avistamientos)
+    lt.addLast(respuestas, avistamientos_ciudad)
+    lt.addLast(respuestas, mapa)
+    lt.addLast(respuestas, llaves)
+    return respuestas
 # Funciones de consulta
 
 # Funciones utilizadas para comparar elementos dentro de una lista
