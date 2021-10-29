@@ -66,17 +66,17 @@ while True:
         print("Altura:", str(controller.height(contr)), "\n")
         print("Elementos:", str(controller.size(contr)), "\n")
         
-    ''' 
+    
     elif int(inputs[0]) == 3:
-
+        pass
     elif int(inputs[0]) == 4:
-
+        pass
     elif int(inputs[0]) == 5:
-
+        pass
     elif int(inputs[0]) == 6:
-
+        pass
     else:
-        sys.exit(0)''' 
+        sys.exit(0)
 
 
       
