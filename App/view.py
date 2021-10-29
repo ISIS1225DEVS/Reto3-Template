@@ -37,13 +37,13 @@ operación solicitada
 
 def printMenu():
     print("Bienvenido")
-    print("  1- Inicializar Catálogo")
-    print("  2- Cargar información en el catálogo")
-    print("  3- Cargar requerimiento 1.")
-    print("  4- Cargar requerimiento 2.")
-    print("  5- Cargar requerimiento 3.")
-    print("  6- Cargar requerimiento 4.")
-    print("  7- Cargar requerimiento 5.")
+    print("1- Inicializar Catálogo")
+    print("2- Cargar información en el catálogo")
+    print("3- Cargar requerimiento 1.")
+    print("4- Cargar requerimiento 2.")
+    print("5- Cargar requerimiento 3.")
+    print("6- Cargar requerimiento 4.")
+    print("7- Cargar requerimiento 5.")
 
 
 catalog = None
