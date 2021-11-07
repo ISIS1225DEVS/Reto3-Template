@@ -23,10 +23,13 @@
 import config as cf
 import sys
 import controller
+#import model
 assert cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
+from datetime import datetime
+from prettytable import PrettyTable
 
 ufosFile = 'UFOS//UFOS-utf8-small.csv'
 cont = None
@@ -87,26 +90,27 @@ while loop:
         cont = controller.init()
 
     elif inputs[0] == "2":
-        print("\nCargando información de crimenes ....")
+        print("\nCargando información de crimenes ....\n")
         controller.loadData(cont, ufosFile)
         
         print('Total de avistamientos cargados: ' + str(controller.getCasesSize(cont)))
-        print('Primeros 5 avistamientos: ')
-        print('Ultimos 5 avistamientos: ')
-        print(me.getValue(mp.get(cont, "cases")))
+        
+        print('Primeros y ultimos 5 avistamientos: ')
+
+        print(controller.loadData(cont, ufosFile))
 
     elif inputs[0] == "3":
-        city = input("Inserte la ciudad en la cual desea consultar la información.")
+        city = input("Inserte la ciudad en la cual desea consultar la información: ")
         print(controller.getCasesByCity(cont, city))
 
     elif inputs[0] == "4":
-        beginSeconds = input("Inserte la fecha incial en formato AAAA-MM-DD: ")
-        endSeconds = input("Inserte la fecha final en formato AAAA-MM-DD: ")
+        beginSeconds = input("Inserte los segundos inicales para el rango: ")
+        endSeconds = input("Inserte los segundos finales para el rango: ")
         print(controller.getCasesBetweeenSeconds(cont, beginSeconds, endSeconds))
 
     elif inputs[0] == "5":
-        beginHour = input("Inserte la fecha incial en formato AAAA-MM-DD: ")
-        endHour = input("Inserte la fecha final en formato AAAA-MM-DD: ")
+        beginHour = input("Inserte la hora inical para el rango en formato HH:MM:SS: ")
+        endHour = input("Inserte la hora final para el rango en formato HH:MM:SS: ")
         print(controller.getCasesBetweeenHours(cont, beginHour, endHour))
 
 

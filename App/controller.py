@@ -31,6 +31,8 @@ El controlador se encarga de mediar entre la vista y el modelo.
 import config as cf
 import model
 import csv
+from datetime import datetime
+from DISClib.ADT import map as mp
 
 
 
@@ -63,6 +65,12 @@ def loadData(analyzer, ufosFile):
                                 delimiter=",")
     for case in input_file:
         model.addCase(analyzer, case)
+
+    sorted = model.sortByDate(analyzer)
+    mp.put(analyzer, "cases", sorted)
+
+    analyzer = model.firstAndLastFiveCases(analyzer)
+
     return analyzer
 
 
@@ -79,7 +87,7 @@ def getCasesByCity(analyzer, city):
 #----------------------------------------
 
 def getCasesBetweeenSeconds(analyzer, beginSeconds, endSeconds):
-    return model.getCasesBetweeenDates(analyzer, beginSeconds, endSeconds)
+    return model.getCasesBetweeenSeconds(analyzer, beginSeconds, endSeconds)
 
 #----------------------------------------
 
