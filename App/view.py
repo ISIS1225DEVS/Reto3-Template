@@ -31,6 +31,7 @@ from DISClib.Algorithms.Sorting import mergesort as merge
 from prettytable import PrettyTable
 assert cf
 import datetime
+import time
 
 """
 La vista se encarga de la interacción con el usuario
@@ -41,8 +42,10 @@ operación solicitada
 
 def printMenu():
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- Requerimiento 1 (Grupal): Contar los avistamientos en una ciudad")
+    print("1- Cargar información en el catálogo.")
+    print("2- Requerimiento 1 (Grupal): Contar los avistamientos en una ciudad.")
+    print("3- Requerimiento 2 (Individual): Contar los avistamientos por duración.")
+    print("4- Requerimiento 3 (Individual): Contar avistamientos por Hora/Minutos del día.")
 
 def initCatalog():
     """
@@ -55,7 +58,7 @@ def loadData(catalog):
     Carga los datos en el catálogo pasado por parámetro
     """
     controller.loadData(catalog)
-
+    
 catalog = None
 
 """
@@ -118,6 +121,7 @@ while True:
     elif int(inputs[0]) == 2:
 
         city= input("Digite la ciudad a consultar: ")
+        print()
         respuestas= controller.contar_avistamientos(catalog, city)
         llaves= lt.getElement(respuestas, 4)
         mapa= lt.getElement(respuestas, 3)
@@ -160,7 +164,87 @@ while True:
             print("=======================================================")
             y-=1
         
-                                 
+    elif int(inputs[0]) == 3:
+
+        pass
+
+    elif int(inputs[0]) == 4:
+
+        hora_inicial= input("Digite el limite inferior en formato HH:MM\n") + ":00"
+        hora_inicial= datetime.datetime.strptime(hora_inicial, "%H:%M:%S")
+        hora_final= input("Digite el limite inferior en formato HH:MM\n") + ":00"
+        hora_final= datetime.datetime.strptime(hora_final, "%H:%M:%S")
+        start_time = time.process_time()
+        respuestas= controller.contar_avistamientos_hora(catalog, hora_inicial, hora_final)
+        end_time= time.process_time()
+        elapsed_time_mseg = round((end_time - start_time) * 1000, 3)
+        contador_rango= lt.getElement(respuestas, 1)
+        mapa_tarde= lt.getElement(respuestas, 2)
+        llaves1= lt.getElement(respuestas, 3)
+        mapa_rango= lt.getElement(respuestas, 4)
+        llaves2= lt.getElement(respuestas, 5)
+        print('===================== Req No. 3 Inputs =====================\n')
+        print(f"UFO sightings between {hora_inicial} and {hora_final}")
+        print("\n===================== Req No. 3 Answer =====================")
+        print(f"There are {om.size(mapa_tarde)} different UFO sightings times [HH:MM:SS]...")
+        print("The 5 latest times in which UFOs have been sighted are: ")
+        print()
+        tabla= PrettyTable()
+        tabla.field_names= ["Time", "Count"]
+        x= 0
+        for hours in lt.iterator(llaves1):      
+            tabla.add_row([hours, me.getValue(om.get(mapa_tarde, hours))])  
+            x+=1
+            if x == 5:
+                break
+        print(tabla)
+        print()
+        print(f"There are {contador_rango} different UFO sightings between the times stipulated")
+        print("The 3 first and last UFO sightings between the range stipulated are: ")
+        lista_max= lt.newList(datastructure="ARRAY_LIST")
+        lista_min= lt.newList(datastructure="ARRAY_LIST")
+        x= 1
+        while x <=3:
+            lt.addLast(lista_max, lt.getElement(llaves2, x))
+            x+=1
+        x=0 
+        while x<=2:
+            lt.addLast(lista_min, lt.getElement(llaves2, lt.size(llaves2)-x))
+            x+=1
+
+        for dates in lt.iterator(lista_min):
+            city= mp.get(om.get(mapa_rango, dates)["value"], "city")["value"]
+            state= mp.get(om.get(mapa_rango, dates)["value"], "state")["value"]
+            country= mp.get(om.get(mapa_rango, dates)["value"], "country")["value"]
+            shape= mp.get(om.get(mapa_rango, dates)["value"], "shape")["value"]
+            duration= mp.get(om.get(mapa_rango, dates)["value"], "duration (seconds)")["value"]
+            print("========================================================")
+            print(f"Datetime: {dates}")
+            print(f"City: {city}")
+            print(f"State: {state}")
+            print(f"Country: {country}")
+            print(f"Shape: {shape}")
+            print(f"Duration (seconds): {duration}")
+            print("========================================================")
+
+        for dates in lt.iterator(lista_max):
+            city= mp.get(om.get(mapa_rango, dates)["value"], "city")["value"]
+            state= mp.get(om.get(mapa_rango, dates)["value"], "state")["value"]
+            country= mp.get(om.get(mapa_rango, dates)["value"], "country")["value"]
+            shape= mp.get(om.get(mapa_rango, dates)["value"], "shape")["value"]
+            duration= mp.get(om.get(mapa_rango, dates)["value"], "duration (seconds)")["value"]
+            print("========================================================")
+            print(f"Datetime: {dates}")
+            print(f"City: {city}")
+            print(f"State: {state}")
+            print(f"Country: {country}")
+            print(f"Shape: {shape}")
+            print(f"Duration (seconds): {duration}")
+            print("========================================================")
+        
+        print()
+        print(f"Elapsed time (ms): {elapsed_time_mseg}")
+        print()
     else:
         sys.exit(0)
 sys.exit(0)

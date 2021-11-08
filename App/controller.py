@@ -51,6 +51,9 @@ def loadData(catalog):
 def contar_avistamientos(catalog, city):
     return model.contar_avistamientos(catalog, city)
 
+def contar_avistamientos_hora(catalog, hora_inicial, hora_final):
+    return model.contar_avistamientos_hora(catalog, hora_inicial, hora_final)
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo

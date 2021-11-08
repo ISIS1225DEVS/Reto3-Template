@@ -124,8 +124,46 @@ def contar_avistamientos(catalog, city):
     lt.addLast(respuestas, mapa)
     lt.addLast(respuestas, llaves)
     return respuestas
-# Funciones de consulta
 
-# Funciones utilizadas para comparar elementos dentro de una lista
+def compare_time(time1, time2):
 
-# Funciones de ordenamiento
+    if(time1 < time2):
+        return 1
+    elif(time2 == time1):
+        return 0
+    else: 
+        return -1
+
+def contar_avistamientos_hora(catalog, hora_inicial, hora_final):
+    contador_rango= 0
+    mapa_rango= om.newMap(comparefunction= compare_time)
+    mapa_tarde= om.newMap(comparefunction= compare_time)
+    for diccionarios in lt.iterator(mp.get(catalog, 'ufo_sightings')["value"]):
+
+        hora= mp.get(diccionarios, "datetime")["value"]
+        hora2= hora[11:]
+        hora= hora[11:]       
+        hora= datetime.datetime.strptime(hora, "%H:%M:%S")
+            
+        if om.contains(mapa_tarde, hora2):
+            n= om.get(mapa_tarde, hora2)["value"]
+            n+=1
+            om.put(mapa_tarde, hora2, n)
+        else:
+            om.put(mapa_tarde, hora2, 1)
+
+        if(hora >= hora_inicial) and (hora <= hora_final):
+                
+            om.put(mapa_rango, mp.get(diccionarios, "datetime")["value"], diccionarios)
+            contador_rango+=1
+
+    llaves1= om.keySet(mapa_tarde)
+    llaves2= om.keySet(mapa_rango)
+    respuestas= lt.newList(datastructure="ARRAY_LIST")
+    lt.addLast(respuestas, contador_rango)
+    lt.addLast(respuestas, mapa_tarde)
+    lt.addLast(respuestas, llaves1)
+    lt.addLast(respuestas, mapa_rango)
+    lt.addLast(respuestas, llaves2)
+    return respuestas
+
