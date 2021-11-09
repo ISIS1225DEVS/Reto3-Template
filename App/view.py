@@ -27,7 +27,6 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 assert cf
 
-
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -35,38 +34,62 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+ufosfile = 'UFOS-utf8-small.csv'
+cont = None
+
 def printMenu():
+    print("\n")
+    print("********************************************")
     print("Bienvenido")
-    print("1- Inicializar Catálogo")
-    print("2- Cargar información en el catálogo")
-    print("3- Cargar requerimiento 1.")
-    print("4- Cargar requerimiento 2.")
-    print("5- Cargar requerimiento 3.")
-    print("6- Cargar requerimiento 4.")
-    print("7- Cargar requerimiento 5.")
+    print("1- Inicializar Analizador y Cargar información de crimenes.")
+    print("2- Contar los avistamientos en una ciudad.")
+    print("3- Contar los avistamientos por duración.")
+    print("4- Contar avistamientos por Hora/Minutos del día.")
+    print("5- Contar los avistamientos en un rango de fechas.")
+    print("6- Contar los avistamientos de una Zona Geográfica.")
+    print("0- Salir")
+    print("********************************************")
 
+def printReq1Results(sightingsList):
+    size = lt.size(sightingsList)
+    i = size
+    j = 1
+    print('Primeros 3: \n')
+    while j < 4:
+        sighting = lt.getElement(sightingsList ,j)
+        print(' -Tiempo y Fecha: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Estado: ' +  sighting['state'] + ' -Pais: ' + sighting['country'] + ' -Forma: ' + sighting['shape'] + ' -Duracion(s): ' + sighting['duration (seconds)'])
+        j += 1
+        print()
+    print('Ultimos 3: \n')
+    while i > size - 3:
+        sighting = lt.getElement(sightingsList ,i)
+        print(' -Tiempo y Fecha: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Estado: ' +  sighting['state'] + ' -Pais: ' + sighting['country'] + ' -Forma: ' + sighting['shape'] + ' -Duracion(s): ' + sighting['duration (seconds)'])
+        i -= 1
+        print()
 
-catalog = None
 
 """
 Menu principal
 """
 while True:
     printMenu()
-    inputs = input('Seleccione una opción para continuar\n')
+    inputs = input('Seleccione una opción para continuar: ')
     if int(inputs[0]) == 1:
-        print("Cargando información de los archivos ....")
-        contr = controller.initCatalog()
-        print("Catálogo Inicializado\n")
+        print("\nInicializando....")
+        cont = controller.init()
+        print("\nCargando información de UFOS ....")
+        controller.loadData(cont, ufosfile)
+        print('Avistamientos cargados: ' + str(controller.ufosSize(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 2:
-        print("Cargando información de los archivos ....\n")
-        controller.loadData(contr)
-        print("Avistamientos:", str(controller.AvistamientosSize(contr)), "\n")
-        print("Altura:", str(controller.height(contr)), "\n")
-        print("Elementos:", str(controller.size(contr)), "\n")
-        
-    
+        ciudad = input('Avistamientos de OVNIS en la ciudad de: ')
+        sightingsByCity = controller.sightingsByCity(cont, ciudad)
+        printReq1Results(sightingsByCity)
+
     elif int(inputs[0]) == 3:
         pass
     elif int(inputs[0]) == 4:
@@ -77,9 +100,4 @@ while True:
         pass
     else:
         sys.exit(0)
-
-
-      
 sys.exit(0)
-
-

@@ -19,58 +19,75 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
-from App.model import OrderedArtist
+
 import config as cf
 import model
+import datetime
 import csv
-
-
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 """
-def initCatalog():
-    ana = model.initCatalog()
-    return ana
 
-def loadData(ana):
+# Inicialización del Analizador
+
+def init():
+    """
+    Llama la funcion de inicializacion  del modelo.
+    """
+    analizer = model.newAnalyzer()
+    return analizer
+
+# Funciones para la carga de datos
+
+def loadData(analizer, ufosfile):
     """
     Carga los datos de los archivos CSV en el modelo
     """
-    UFOf = cf.data_dir + 'UFOS-utf8-small.csv'
-    inputfile = csv.DictReader(open(UFOf, encoding="utf-8"),delimiter=",")
-    for avist in inputfile:
-        model.addAvist(ana, avist)
-    return ana
-# Inicialización del Catálogo de libros
+    ufosfile = cf.data_dir + ufosfile
+    input_file = csv.DictReader(open(ufosfile, encoding = "utf-8"), delimiter = ",")
+    for ufo in  input_file:
+        model.addUFO(analizer, ufo)
+    return analizer
 
-# Funciones para la carga de datos
+# Funciones para consultas
+
+def sightingsByCity(analyzer, city):
+   'Req 1'
+   return model.sightingsByCity(analyzer, city)
+
+def ufosSize(analyzer):
+    """
+    Numero de UFOS leidos
+    """
+    return model.ufosSize(analyzer)
+
+def indexHeight(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight(analyzer)
+
+def indexSize(analyzer):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSize(analyzer)
+
+def minKey(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey(analyzer)
+
+
+def maxKey(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey(analyzer)
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
-
-
-def getcityadvis(catalog, City):
-    cityLt = model.addAvist(catalog, City)
-    return cityLt
-
-def getltDates(cityLt):
-    ltDates= model.ltDates(cityLt)
-    return ltDates
-
-def getOrderedlt(ltDates):
-    Orderedlt = model.Orderedlt(ltDates)
-    return Orderedlt
-
-def getOrderedArtist(Orderedlt, cityLt ):
-    ordered= model.OrderedArtist(Orderedlt, cityLt)
-    return OrderedArtist
-
-def gettop3fi(ordered):
-    firsts = model.top3fi(ordered)
-    return firsts
-def gettop3la(ordered):
-    latests= model.top3la(ordered)
-    return ordered
 

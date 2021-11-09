@@ -24,100 +24,124 @@
  * Dario Correal - Version inicial
  """
 
-
-import config as cf
+import config
 from DISClib.ADT import list as lt
-from DISClib.ADT import map as mp
+from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
-from DISClib.Algorithms.Sorting import shellsort as sa
-assert cf
-
-"""
-Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
-los mismos.
-"""
+from DISClib.ADT import map as m
+from DISClib.Algorithms.Sorting import mergesort as mgs
+import datetime
+assert config
 
 # Construccion de modelos
 
-def initCatalog():
-    catalog = {'avistamiento': None,'dateIndex': None}
+def newAnalyzer():
+    analyzer = {'ufos': None, 'dateIndex': None}
+    analyzer['ufos'] = lt.newList('ARRAY_LIST', cmpIds)
+    analyzer['dateIndex'] = om.newMap(omaptype='RBT', comparefunction = cmpDates)
+    return analyzer
 
-    catalog['avistamiento'] = lt.newList('SINGLE_LINKED', compare)
-    catalog['dateIndex'] = om.newMap(omaptype='BST', comparefunction=compare)
-    catalog['City']=om.newMap(omaptype='BST',comparefunction=compare)
-    return catalog
 
 # Funciones para agregar informacion al catalogo
-def AddAvist(catalog, avistamiento):
-    lt.addLast(catalog['avistamiento'], avistamiento)
-    City  = avistamiento['City']
-    State = om.contains(catalog['City'], City)
-    if not State:
-        Ltcity = lt.newList()
-        lt.addLast(listaCiudad, avistamiento)
-        om.put(catalog['City'],City,Ltcity)
-    else:
-        Ltcity = om.get(catalog['City'], City)['value']
-        lt.addLast(Ltcity, avistamiento)
-        om.put(catalog['City'], City, Ltcity)
+
+def addUFO(analyzer, ufo):
+    lt.addLast(analyzer['ufos'], ufo)
+    updateDateIndex(analyzer['dateIndex'], ufo)
+    return analyzer
+
+def updateDateIndex(map, ufo):
+    ufodate = stringToDateFormat(ufo['datetime']).date()
+    om.put(map, ufodate, ufo)
 
 # Funciones para creacion de datos
 
 # Funciones de consulta
-def avistCiudad(catalog, City):
-    NumberOfcities=0
-    NumberAvistCiudad=0
-    cityLt= lt.newList()
-    for City  in lt.iterator(catalog['City']):
-        NumberOfcities+=1
-        if catalog['City'] == City:
-            for i in catalog['City']:
-                NumberAvistCiudad+= 1
-                Dat =lt.newList()
-                lt.addLast(Dat, i['Datetime'])
-                lt.addLast(Dat, i['City'])
-                lt.addLast(Dat, i['Country'])
-                lt.addLast(Dat, i['Duration'])
-                lt.addLast(Dat, i['Shape'])
-                lt.addLast(cityLt, Dat)
-    return cityLt
+
+def sightingsByCity(analyzer, city):
+    sightings = lt.newList('ARRAY_LIST')
+    for sighting in lt.iterator(analyzer['ufos']):
+        if sighting['city'] == city:
+            lt.addLast(sightings, sighting)
+    sightings = sortCatalogLst(sightings, lt.size(sightings), cmpDatesLst)
+    return sightings
 
 
-def ltDates(cityLt):
-    ltDates= lt.newList()
-    for i in ltDates:
-        lt.addLast(ltDates, i['Datetime'])
-    return ltDates
+def ufosSize(analyzer):
+    """
+    Número de avistamientos
+    """
+    return lt.size(analyzer['ufos'])
 
-def Orderedlt(ltDates):
-    Orderedlt=sa.sort(ltDates, compare)
-    return ltDates
 
-def OrderedArtist(Orderedlt, cityLt ):
-    ordered = lt.newList
-    for date in Orderedlt:
-        for i in cityLt:
-            if date == i['Datetime']:
-                lt.addLast(ordered, i)
-    return ordered
+def indexHeight(analyzer):
+    """
+    Altura del arbol
+    """
+    return om.height(analyzer['dateIndex'])
 
-def top3fi(ordered):
-    firsts=lt.subList(ordered, 1, 3)
-    return firsts
 
-def top3la(ordered):
-    latests=lt.subList(ordered, (lt.size(ordered))-2, 3)
-    return latests
-# Funciones utilizadas para comparar elementos dentro de una lista
+def indexSize(analyzer):
+    """
+    Numero de elementos en el indice
+    """
+    return om.size(analyzer['dateIndex'])
 
-def compare(v1, v2):
-    if (v1 == v2):
+
+def minKey(analyzer):
+    """
+    Llave mas pequena
+    """
+    return om.minKey(analyzer['dateIndex'])
+
+
+def maxKey(analyzer):
+    """
+    Llave mas grande
+    """
+    return om.maxKey(analyzer['dateIndex'])
+
+
+# Funciones utilizadas para comparar elementos
+
+def cmpIds(id1, id2):
+    """
+    Compara dos UFOS
+    """
+    if (id1 == id2):
         return 0
-    elif v1 > v2:
+    elif id1 > id2:
         return 1
     else:
         return -1
 
+
+def cmpDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
+
+def cmpDatesLst(date1, date2):
+    'Return True if Date1 < Date2'
+    return stringToDateFormat(date1['datetime']).date() < stringToDateFormat(date2['datetime']).date()
+
 # Funciones de ordenamiento
 
+def sortCatalogLst(lst, size, parameter):
+    sub_list = lt.subList(lst, 0, size)
+    sub_list = sub_list.copy()
+    sorted_list = mgs.sort(sub_list, parameter)
+    return sorted_list 
 
+# Funciones Auxiliares
+
+def stringToDateFormat(stringDate):
+    if stringDate == '':
+        return datetime.datetime.strptime(1,1,1,1,1,1)
+    else:
+        return datetime.datetime.strptime(stringDate, '%Y-%m-%d %H:%M:%S')
