@@ -50,10 +50,12 @@ def printMenu():
     print("0- Salir")
     print("********************************************")
 
-def printReq1Results(sightingsList):
+def printReq1Results(sightingsList, city, cont):
     size = lt.size(sightingsList)
     i = size
     j = 1
+    print('Hay ' + str(om.size(cont['city'])) + ' ciudades con avistamientos de OVNIS.')
+    print('Avistamientas en ' + city + ': ' + str(size) + '\n')
     print('Primeros 3: \n')
     while j < 4:
         sighting = lt.getElement(sightingsList ,j)
@@ -88,7 +90,7 @@ while True:
     elif int(inputs[0]) == 2:
         ciudad = input('Avistamientos de OVNIS en la ciudad de: ')
         sightingsByCity = controller.sightingsByCity(cont, ciudad)
-        printReq1Results(sightingsByCity)
+        printReq1Results(sightingsByCity, ciudad, cont)
 
     elif int(inputs[0]) == 3:
         pass

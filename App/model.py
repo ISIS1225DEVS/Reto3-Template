@@ -36,9 +36,11 @@ assert config
 # Construccion de modelos
 
 def newAnalyzer():
-    analyzer = {'ufos': None, 'dateIndex': None}
+    analyzer = {'ufos': None, 'dateIndex': None, 'city': None}
     analyzer['ufos'] = lt.newList('ARRAY_LIST', cmpIds)
     analyzer['dateIndex'] = om.newMap(omaptype = 'RBT', comparefunction = cmpDates)
+    analyzer['city'] = om.newMap(omaptype = 'RBT', comparefunction = cmpStrings)
+
     return analyzer
 
 # Funciones para agregar informacion al catalogo
@@ -46,6 +48,7 @@ def newAnalyzer():
 def addUFO(analyzer, ufo):
     lt.addLast(analyzer['ufos'], ufo)
     updateDateIndex(analyzer['dateIndex'], ufo)
+    updateCity(analyzer['city'], ufo)
     return analyzer
 
 def updateDateIndex(map, ufo):
@@ -59,15 +62,25 @@ def updateDateIndex(map, ufo):
     lt.addLast(datentry, ufo)
     return map
 
+def updateCity(map, ufo):
+    entry = om.get(map, ufo['city'])
+    if entry is None:
+        datentry = lt.newList('ARRAY_LIST')
+        om.put(map, ufo['city'], datentry)
+    else:
+        datentry = me.getValue(entry)
+    lt.addLast(datentry, ufo)
+    return map
+
 # Funciones para creacion de datos
 
 # Funciones de consulta
 
 def sightingsByCity(analyzer, city):
     sightings = lt.newList('ARRAY_LIST')
-    for sighting in lt.iterator(analyzer['ufos']):
-        if sighting['city'] == city:
-            lt.addLast(sightings, sighting)
+    pair = om.get(analyzer['city'], city)
+    if pair is not None:
+        sightings = me.getValue(pair)
     sightings = sortCatalogLst(sightings, lt.size(sightings), cmpDatesLst)
     return sightings
 
@@ -133,6 +146,14 @@ def cmpDates(date1, date2):
 def cmpDatesLst(date1, date2):
     'Return True if Date1 < Date2'
     return stringToDateFormat(date1['datetime']).date() < stringToDateFormat(date2['datetime']).date()
+
+def cmpStrings(str1, str2):
+    if str1 == str2:
+        return 0
+    elif str1 > str2:
+        return 1
+    else:
+        return -1
 
 # Funciones de ordenamiento
 
