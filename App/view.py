@@ -19,12 +19,16 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
-
 import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
 assert cf
+import datetime
+import time
+default_limit=1000
+sys.setrecursionlimit(default_limit*10)
 
 
 """
@@ -63,11 +67,11 @@ while True:
         controller.loadData(catalog,ufofile)
         print('Se han cargado los datos...')
         info= controller.total_sightings(catalog)
-        print("Total de avistamientos cargados: "+ str(info[0]))
-        print("Los primeros 5 avistamientos son:")
-        print(info[1])
-        print("Los últimos 5 avistamientos son:")
-        print(info[2])
+        # print("Total de avistamientos cargados: "+ str(info[0]))
+        # print("Los primeros 5 avistamientos son:")
+        # print(info[1])
+        # print("Los últimos 5 avistamientos son:")
+        # print(info[2])
 
     elif int(inputs[0]) == 2:
         ciudad= input("Ingrese el nombre de la ciudad a consultar: ")
@@ -101,7 +105,98 @@ while True:
         print("El número de elementos dentro del árbol implementado para este requerimiento es: "+ str(info[0]))
         print("La altura del árbol implementado para este requerimiento es: "+ str(info[1]))
         print("="*40)
-        
+    elif int(inputs[0]) == 4:
+        lowhour = input('Hora Inicial (HH:MM): ')
+        highhour = input('Hora Final (HH:MM): ')
+        older_hour = controller.older_hour(catalog)
+        hours_in_range = controller.hours_in_range(catalog, lowhour, highhour)
+        size_range = controller.size_in_range(hours_in_range)
+        primeros = []
+        ultimos = []
+        Primeros = lt.subList(hours_in_range,1,3)
+        Ultimos = lt.subList(hours_in_range,-2,3)
+        lst_olders = []
+        j = 0
+        while j < 1:
+            last = lt.removeLast(older_hour)
+            k = last['first']['info']
+            date = datetime.datetime.strptime(k['datetime'], '%Y-%m-%d %H:%M:%S')
+            date2 = date.time()
+            size_older = last['size']
+            j += 1
+            lst_olders.append((str(date2),size_older))
+        for actual in lt.iterator(Primeros):
+            dict = {}
+            dict["datetime"]= actual["datetime"]
+            dict["location"]= actual["city"] + ", "+ actual["country"]
+            dict["duration (secs.)"]= actual["duration (seconds)"]
+            dict["shape"]= actual["shape"]
+            primeros.append(dict)
+        for actual in lt.iterator(Ultimos):
+            dict = {}
+            dict["datetime"]= actual["datetime"]
+            dict["location"]= actual["city"] + ", "+ actual["country"]
+            dict["duration (secs.)"]= actual["duration (seconds)"]
+            dict["shape"]= actual["shape"]
+            ultimos.append(dict)
+
+        print('')
+        print('Ejecutando...')
+        print('')
+        print('El avistamiento más tardío es: ', lst_olders)
+        print('Los números de avistamientos dentro del rango de fechas son: ', size_range)
+        print('Los primeros 3 avistamientos en el rango son: ', )
+        for a in primeros:
+            print(a)
+        print('Los últimos 3 avistamientos en el rango son: ', )
+        for a in ultimos:
+            print(a)
+
+    elif int(inputs[0]) == 5:
+        lowdate = input('Fecha Inicial (YYYY-MM-DD): ')
+        highdate = input('Fecha Final (YYYY-MM-DD): ')
+        older_date = controller.older_sightings(catalog)
+        dates_in_range = controller.dates_in_range(catalog,lowdate,highdate)
+        size_range = controller.size_in_range(dates_in_range[0])
+        primeros = []
+        ultimos = []
+        lst_olders = []
+        j = 0
+        for i in lt.iterator(older_date):
+            k = i['first']['info']
+            if j < 1:
+                date = datetime.datetime.strptime(k['datetime'], '%Y-%m-%d %H:%M:%S')
+                date2 = date.date()
+                size_older = i['size']
+                j += 1
+                lst_olders.append((str(date2),size_older))
+        for i in lt.iterator(dates_in_range[1]):
+            for j in lt.iterator(i):
+                dict = {}
+                dict["datetime"]= j["datetime"]
+                dict["location"]= j["city"] + ", "+ j["country"]
+                dict["duration (secs.)"]= j["duration (seconds)"]
+                dict["shape"]= j["shape"]
+                primeros.append(dict)
+        for i in lt.iterator(dates_in_range[2]):
+            for j in lt.iterator(i):
+                dict = {}
+                dict["datetime"]= j["datetime"]
+                dict["location"]= j["city"] + ", "+ j["country"]
+                dict["duration (secs.)"]= j["duration (seconds)"]
+                dict["shape"]= j["shape"]
+                ultimos.append(dict)
+        print('')
+        print('Ejecutando...')
+        print('')
+        print('La fecha más antiguas es: ', lst_olders)
+        print('Los números de avistamientos dentro del rango de fechas son: ', size_range)
+        print('Los primeros 3 avistamientos en el rango son: ', )
+        for a in primeros:
+            print(a)
+        print('Los últimos 3 avistamientos en el rango son: ', )
+        for a in ultimos:
+            print(a)
     else:
         sys.exit(0)
 sys.exit(0)

@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from sys import int_info
 import config as cf
 import model
 import csv
@@ -59,4 +60,25 @@ def sightings_by_city(catalog,city):
 
 def size_city_tree(catalog):
     info= model.size_city_tree(catalog)
+    return info
+
+#Requerimiento 3
+
+def older_hour(catalog):
+    info = model.older_hour(catalog)
+    return info
+def hours_in_range(catalog, lowhour, highhour):
+    info = model.hours_in_range(catalog, lowhour, highhour)
+    return info
+
+#Requerimiento 4
+
+def older_sightings(catalog):
+    info = model.older_sightings(catalog)
+    return info
+def dates_in_range(catalog, lowdate, highdate):
+    info = model.dates_in_range(catalog, lowdate, highdate)
+    return info
+def size_in_range(lst):
+    info = model.size_in_range(lst)
     return info
