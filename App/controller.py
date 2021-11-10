@@ -54,7 +54,7 @@ def cargarHoursIndex(catalog):
 
 def cargarLongitudesIndex(catalog):
     model.addLongitudIndex(catalog)  
-# Funciones de ordenamiento
+
 
 # Funciones de consulta sobre el catálogo
 def casosPorCiudad(catalog,ciudad):

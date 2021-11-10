@@ -278,4 +278,4 @@ def compareLongitud(longitud1,longitud2):
         return 1
     else:
         return -1       
-# Funciones de ordenamiento
+
