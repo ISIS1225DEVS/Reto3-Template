@@ -53,7 +53,8 @@ def InitCatalog():
     catalog['UFO_sightings'] = lt.newList(datastructure='ARRAY_LIST')
     catalog['duration_UFO'] = om.newMap(omaptype='RBT', comparefunction= cmpSeconds)
     catalog['datetime_UFO'] = om.newMap(omaptype='RBT', comparefunction= cmpDate)
-    catalog['hour_UFO'] = om.newMap(omaptype="RBT", comparefunction= cmpHour) #Falta por agregar
+    catalog['hour_UFO'] = om.newMap(omaptype="RBT", comparefunction= cmpHour)
+    catalog['']
     catalog['cities'] = om.newMap(omaptype="RBT")
 
     return catalog
@@ -179,7 +180,7 @@ def dates_in_range(orderedmap, lowdate, highdate):
     mindate = mindate.date()
     maxdate = maxdate.date()
     lst_range = om.values(dates_tree,mindate,maxdate)
-    sub_dates = lst_range
+    sub_dates = lt.subList(lst_range,0,lt.size(lst_range)+1)
     Primeros = lt.subList(lst_range,1,3)
     Ultimos = lt.newList('ARRAY_LIST')
     j = 0
