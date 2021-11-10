@@ -40,7 +40,8 @@ def newAnalyzer():
     analyzer['ufos'] = lt.newList('ARRAY_LIST', cmpIds)
     analyzer['dateIndex'] = om.newMap(omaptype = 'RBT', comparefunction = cmpDates)
     analyzer['city'] = om.newMap(omaptype = 'RBT', comparefunction = cmpStrings)
-
+    #analyzer['durations(sec)'] = map
+    analyzer['timeIndex'] = om.newMap(omaptype = 'RBT', comparefunction = cmpDates)
     return analyzer
 
 # Funciones para agregar informacion al catalogo
@@ -48,6 +49,7 @@ def newAnalyzer():
 def addUFO(analyzer, ufo):
     lt.addLast(analyzer['ufos'], ufo)
     updateDateIndex(analyzer['dateIndex'], ufo)
+    updateTimeIndex(analyzer['timeIndex'], ufo)
     updateCity(analyzer['city'], ufo)
     return analyzer
 
@@ -72,7 +74,18 @@ def updateCity(map, ufo):
     lt.addLast(datentry, ufo)
     return map
 
-# Funciones para creacion de datos
+
+
+def updateTimeIndex(map, ufo):
+    ufotime = stringToDateFormat(ufo['datetime']).time()
+    entry = om.get(map, ufotime)
+    if entry is None:
+        datentry = lt.newList('ARRAY_LIST')
+        om.put(map, ufotime, datentry)
+    else:
+        datentry = me.getValue(entry)
+    lt.addLast(datentry, ufo)
+    return map
 
 # Funciones de consulta
 
@@ -82,6 +95,20 @@ def sightingsByCity(analyzer, city):
     if pair is not None:
         sightings = me.getValue(pair)
     sightings = sortCatalogLst(sightings, lt.size(sightings), cmpDatesLst)
+    return sightings
+
+"""
+def req2():
+    return solucion
+"""
+
+def sightingsPerHour(analyzer, minTime, maxTime):
+    sightings = lt.newList('ARRAY_LIST')
+    timeRange = om.values(analyzer['timeIndex'], stringToTimeFormat(minTime).time(), stringToTimeFormat(maxTime).time())
+    for time in lt.iterator(timeRange):
+        time = sortCatalogLst(time, lt.size(time), cmpDatesLst)
+        for sighting in lt.iterator(time):
+            lt.addLast(sightings, sighting)
     return sightings
 
 def ufosSize(analyzer):
@@ -147,6 +174,10 @@ def cmpDatesLst(date1, date2):
     'Return True if Date1 < Date2'
     return stringToDateFormat(date1['datetime']).date() < stringToDateFormat(date2['datetime']).date()
 
+def cmpTimesLst(date1, date2):
+    'Return True if Date1 < Date2'
+    return stringToDateFormat(date1['datetime']).time() < stringToDateFormat(date2['datetime']).time()
+
 def cmpStrings(str1, str2):
     if str1 == str2:
         return 0
@@ -170,3 +201,9 @@ def stringToDateFormat(stringDate):
         return datetime.datetime.strptime(1,1,1,1,1,1)
     else:
         return datetime.datetime.strptime(stringDate, '%Y-%m-%d %H:%M:%S')
+
+def stringToTimeFormat(stringDate):
+    if stringDate == '':
+        return datetime.datetime.strptime(1,1,1,1,1,1)
+    else:
+        return datetime.datetime.strptime(stringDate, '%H:%M:%S')

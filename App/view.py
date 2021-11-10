@@ -59,13 +59,33 @@ def printReq1Results(sightingsList, city, cont):
     print('Primeros 3: \n')
     while j < 4:
         sighting = lt.getElement(sightingsList ,j)
-        print(' -Tiempo y Fecha: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Estado: ' +  sighting['state'] + ' -Pais: ' + sighting['country'] + ' -Forma: ' + sighting['shape'] + ' -Duracion(s): ' + sighting['duration (seconds)'])
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Estado: ' +  sighting['state'] + ' -Pais: ' + sighting['country'] + ' -Forma: ' + sighting['shape'] + ' -Duracion(s): ' + sighting['duration (seconds)'])
         j += 1
         print()
     print('Ultimos 3: \n')
     while i > size - 3:
         sighting = lt.getElement(sightingsList ,i)
-        print(' -Tiempo y Fecha: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Estado: ' +  sighting['state'] + ' -Pais: ' + sighting['country'] + ' -Forma: ' + sighting['shape'] + ' -Duracion(s): ' + sighting['duration (seconds)'])
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Estado: ' +  sighting['state'] + ' -Pais: ' + sighting['country'] + ' -Forma: ' + sighting['shape'] + ' -Duracion(s): ' + sighting['duration (seconds)'])
+        i -= 1
+        print()
+
+
+
+def printReq3Results(sightingsList):
+    size = lt.size(sightingsList)
+    i = size
+    j = 1
+    print('El total de avistamientos en el rango es: ' + str(size))
+    print('Primeros 3: \n')
+    while j < 4:
+        sighting = lt.getElement(sightingsList ,j)
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'])
+        j += 1
+        print()
+    print('Ultimos 3: \n')
+    while i > size - 3:
+        sighting = lt.getElement(sightingsList ,i)
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'])
         i -= 1
         print()
 
@@ -95,7 +115,11 @@ while True:
     elif int(inputs[0]) == 3:
         pass
     elif int(inputs[0]) == 4:
-        pass #Branch creation
+        firstHour = input('Ingrese la primera hora: ')
+        secondHour = input('Ingrese la segunda hora: ')
+        sightingsPerHour = controller.sightingsPerHour(cont, firstHour, secondHour)
+        printReq3Results(sightingsPerHour)
+
     elif int(inputs[0]) == 5:
         pass
     elif int(inputs[0]) == 6:
