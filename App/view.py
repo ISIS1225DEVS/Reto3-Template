@@ -90,13 +90,31 @@ def printListsDates(list1, list2):
         table1.append([sighting["elements"][0]["datetime"], sighting["elements"][0]["datetime"].split()[0], sighting["elements"][0]["city"],sighting["elements"][0]["state"], sighting["elements"][0]["country"],sighting["elements"][0]["shape"],sighting["elements"][0]["duration (seconds)"]])
     print(tabulate(table1,headers, tablefmt="grid"))
 
+def printDurationSeconds(list1, list2):
+    headers = ["datetime","city","state", "country","shape","duration (seconds)"]
+    table1 = []
+    for sighting in lt.iterator(list1):
+        table1.append([sighting["datetime"], sighting["city"], sighting["state"], sighting["country"], sighting["shape"], sighting["duration (seconds)"]])
+    for sighting in lt.iterator(list2):
+        table1.append([sighting["datetime"], sighting["city"], sighting["state"], sighting["country"], sighting["shape"], sighting["duration (seconds)"]])
+    print(tabulate(table1,headers, tablefmt="grid"))
+
 def printListsDatesByHour(list1, list2):
     headers = ["datetime","time","city", "state", "country","shape","duration (seconds)"]
     table1 = []
     for sighting in lt.iterator(list1):
-        table1.append([sighting["elements"][0]["datetime"], sighting["elements"][0]["datetime"].split()[1], sighting["elements"][0]["city"],sighting["elements"][0]["state"], sighting["elements"][0]["country"],sighting["elements"][0]["shape"],sighting["elements"][0]["duration (seconds)"]])
+        table1.append([sighting["datetime"], sighting["datetime"].split()[1], sighting["city"],sighting["state"], sighting["country"],sighting["shape"],sighting["duration (seconds)"]])
     for sighting in lt.iterator(list2):
-        table1.append([sighting["elements"][0]["datetime"], sighting["elements"][0]["datetime"].split()[1], sighting["elements"][0]["city"],sighting["elements"][0]["state"], sighting["elements"][0]["country"],sighting["elements"][0]["shape"],sighting["elements"][0]["duration (seconds)"]])
+        table1.append([sighting["datetime"], sighting["datetime"].split()[1], sighting["city"],sighting["state"], sighting["country"],sighting["shape"],sighting["duration (seconds)"]])
+    print(tabulate(table1,headers, tablefmt="grid"))
+
+def printLatitudLongitude(list1, list2):
+    headers = ["datetime","time","city", "state", "country","shape","duration (seconds)"]
+    table1 = []
+    for sighting in lt.iterator(list1):
+        table1.append([sighting["datetime"], sighting["city"],sighting["state"], sighting["country"],sighting["shape"],sighting["duration (seconds)"], sighting["latitude"], sighting["longitude"]])
+    for sighting in lt.iterator(list2):
+        table1.append([sighting["datetime"], sighting["city"],sighting["state"], sighting["country"],sighting["shape"],sighting["duration (seconds)"], sighting["latitude"], sighting["longitude"]])
     print(tabulate(table1,headers, tablefmt="grid"))
 
 """
@@ -109,22 +127,27 @@ while True:
         print("Cargando información de los archivos ....")
         catalog = CreateCatalog()
         controller.AddData(catalog)
-        #printSightings(catalog, view=5)
+        #printSightings(catalog, view=5) Can be seen later
 
     elif int(inputs[0]) == 2:
         city = input("Ingrese la ciudad de búsqueda de interés: ")
         print("There are " +  str(omap.size(catalog["cities"])) + " different cities with UFO sightings.")
         print("The city with most UFO sightings is: " + str(controller.largestCity(catalog["cities"])))
         sightings_count, first_3, last_3 = controller.cities(catalog["cities"], city)
-        print("There are " + str(sightings_count) + " sightings at: " + city)
+        print("\nThere are " + str(sightings_count) + " sightings at: " + city)
         print("The first 3 and last 3 UFO sightings are:")
         printListsCities(first_3, last_3)
 
     elif int(inputs[0]) == 3:
-        low_lim = input("Límite inferior en segundos: ")
-        upper_lim = input("Límite superior en segundos: ")
-        print("La altura del árbol es: " + str(omap.height(catalog["dates"])))
-        print("El número de elementos en el árbol es: " + str(omap.size(catalog["dates"])))
+        print("There are "+str(omap.size(catalog["seconds"]))+" different durations of UFO sightings")
+        print("\nThe longest UFO sightings are:")
+        longest, count = controller.longestDurationSeconds(catalog["seconds"])
+        print("Duration (seconds):", int(longest), ", Count:", count)
+        low_lim = float(input("\nLímite inferior en segundos: "))
+        upper_lim = float(input("Límite superior en segundos: "))
+        sightings_count, first_3, last_3 = controller.seconds_range(catalog["seconds"], low_lim, upper_lim)
+        print("\nThere are "+str(sightings_count)+" sightings between: "+str(low_lim)+" and "+str(upper_lim)+" seconds duration.")
+        printDurationSeconds(first_3, last_3)
 
     elif int(inputs[0]) == 4:
         low_lim = input("Límite inferior en formato: HH:MM. ")
@@ -137,13 +160,12 @@ while True:
         sightings_count, first_3, last_3 = controller.dates_rangeByHour(catalog["datesByHour"], low_lim, upper_lim)
         print("There are " + str(sightings_count) + " sightings between: " + low_lim + " and " + upper_lim)
         print("The first 3 and last 3 UFO sightings in this time are:")
-        breakpoint()
         printListsDatesByHour(first_3, last_3)
 
     elif int(inputs[0]) == 5:
         low_lim = input("Límite inferior en formato: AAAA-MM-DD. ")
         upper_lim = input("Límite superior en formato: AAAA-MM-DD. ")
-        print("There are " + str(omap.size(catalog["dates"])) + " UFO sighting with different dates.")
+        print("\nThere are " + str(omap.size(catalog["dates"])) + " UFO sighting with different dates.")
         print("The oldest UFO sighting date is:")
         date, count = controller.oldestDate(catalog["dates"])
         date = date.strftime("%Y-%m-%d")
@@ -151,14 +173,15 @@ while True:
         sightings_count, first_3, last_3 = controller.dates_range(catalog["dates"], low_lim, upper_lim)
         print("There are " + str(sightings_count) + " sightings between: " + low_lim + " and " + upper_lim)
         print("The first 3 and last 3 UFO sightings in this time are:")
-        breakpoint()
         printListsDates(first_3, last_3)
 
     elif int(inputs[0]) == 6:
         long_min, long_max, lat_min, lat_max = map(float, input('Ingrese la longitud mínima, máxima, latitud mínima y máxima separadas por comas: ').split(','))
-        sightings_count, list_sights = controller.coordinates(catalog["coordinates"], long_min, long_max, lat_min, lat_max )
-        breakpoint()
+        sightings_count, first_5, last_5 = controller.coordinates(catalog["coordinates"], long_min, long_max, lat_min, lat_max )
         print("There are " + str(sightings_count) + " different UFO sightings in the current area.")
+        print("\nThe first 5 and last 5 UFO sightings in this time are: ")
+        printLatitudLongitude(first_5, last_5)
+
     else:
         sys.exit(0)
 sys.exit(0)

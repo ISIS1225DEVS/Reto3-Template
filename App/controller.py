@@ -41,6 +41,8 @@ def AddData(catalog):
     for sighting in data: #Por cada fila del .csv
         model.addDates(catalog, sighting) #Se añade las fechas en formato de días
         model.addCity(catalog, sighting) # Se añade la ciudad
+        #breakpoint()
+        model.addDurationSeconds(catalog, sighting) #Se añaden los avistamientos de acuerdo a su duración en segundos
         model.addDatesByHour(catalog, sighting) # Se añade la fecha en formato de horas
         model.addCoordinates(catalog, sighting) # Se añade la coordenada
 
@@ -50,6 +52,9 @@ def AddData(catalog):
 def largestCity(orderedmap):
     return model.largestCity(orderedmap)
 
+def longestDurationSeconds(orderedmap):
+    return model.longestDurationSeconds(orderedmap)
+
 def oldestDate(orderedmap):
     return model.oldestDate(orderedmap)
 
@@ -58,6 +63,9 @@ def oldestDateByHour(orderedmap):
 
 def cities(orderedmap, city):
     return model.cities(orderedmap, city)
+
+def seconds_range(orderedmap, lowlim, upper_lim):
+    return model.seconds_range(orderedmap, lowlim, upper_lim)
 
 def dates_range(orderedmap, lowlim, upper_lim):
     return model.dates_range(orderedmap, lowlim, upper_lim)
