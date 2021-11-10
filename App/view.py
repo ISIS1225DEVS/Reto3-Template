@@ -67,10 +67,10 @@ def printReq1Results(sightingsList):
         i -= 1
         print()
 
-
 """
 Menu principal
 """
+
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar: ')

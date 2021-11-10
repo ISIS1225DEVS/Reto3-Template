@@ -38,9 +38,8 @@ assert config
 def newAnalyzer():
     analyzer = {'ufos': None, 'dateIndex': None}
     analyzer['ufos'] = lt.newList('ARRAY_LIST', cmpIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='RBT', comparefunction = cmpDates)
+    analyzer['dateIndex'] = om.newMap(omaptype = 'RBT', comparefunction = cmpDates)
     return analyzer
-
 
 # Funciones para agregar informacion al catalogo
 
@@ -51,7 +50,14 @@ def addUFO(analyzer, ufo):
 
 def updateDateIndex(map, ufo):
     ufodate = stringToDateFormat(ufo['datetime']).date()
-    om.put(map, ufodate, ufo)
+    entry = om.get(map, ufodate)
+    if entry is None:
+        datentry = lt.newList('ARRAY_LIST')
+        om.put(map, ufodate, datentry)
+    else:
+        datentry = me.getValue(entry)
+    lt.addLast(datentry, ufo)
+    return map
 
 # Funciones para creacion de datos
 
@@ -64,7 +70,6 @@ def sightingsByCity(analyzer, city):
             lt.addLast(sightings, sighting)
     sightings = sortCatalogLst(sightings, lt.size(sightings), cmpDatesLst)
     return sightings
-
 
 def ufosSize(analyzer):
     """
@@ -114,7 +119,6 @@ def cmpIds(id1, id2):
     else:
         return -1
 
-
 def cmpDates(date1, date2):
     """
     Compara dos fechas
@@ -136,7 +140,7 @@ def sortCatalogLst(lst, size, parameter):
     sub_list = lt.subList(lst, 0, size)
     sub_list = sub_list.copy()
     sorted_list = mgs.sort(sub_list, parameter)
-    return sorted_list 
+    return sorted_list
 
 # Funciones Auxiliares
 
