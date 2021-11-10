@@ -20,6 +20,7 @@
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
 
+from io import StringIO
 import config as cf
 import model
 import csv
@@ -38,9 +39,33 @@ def AddData(catalog):
     UFOS_file = cf.data_dir + "UFOS-utf8-small.csv" #Se coloca la ruta del archivo
     data = csv.DictReader(open(UFOS_file, encoding="utf-8"),delimiter=",") #Se lee todo el .csv
     for sighting in data: #Por cada fila del .csv
-        model.AddDates(catalog, sighting) #Se añade las fechas
+        model.addDates(catalog, sighting) #Se añade las fechas en formato de días
         model.addCity(catalog, sighting) # Se añade la ciudad
+        model.addDatesByHour(catalog, sighting) # Se añade la fecha en formato de horas
+        model.addCoordinates(catalog, sighting) # Se añade la coordenada
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def largestCity(orderedmap):
+    return model.largestCity(orderedmap)
+
+def oldestDate(orderedmap):
+    return model.oldestDate(orderedmap)
+
+def oldestDateByHour(orderedmap):
+    return model.oldestDateByHour(orderedmap)
+
+def cities(orderedmap, city):
+    return model.cities(orderedmap, city)
+
+def dates_range(orderedmap, lowlim, upper_lim):
+    return model.dates_range(orderedmap, lowlim, upper_lim)
+
+def dates_rangeByHour(orderedmap, lowlim, upper_lim):
+    return model.dates_rangeByHour(orderedmap, lowlim, upper_lim)
+
+def coordinates(orderedmap,long_min, long_max, lat_min, lat_max):
+    return model.coordinates(orderedmap,long_min, long_max, lat_min, lat_max)
+
+
