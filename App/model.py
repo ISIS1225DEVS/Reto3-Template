@@ -54,7 +54,7 @@ def addUFO(analyzer, ufo):
     return analyzer
 
 def updateDateIndex(map, ufo):
-    ufodate = stringToDateFormat(ufo['datetime']).date()
+    ufodate = stringToDateTimeFormat(ufo['datetime']).date()
     entry = om.get(map, ufodate)
     if entry is None:
         datentry = lt.newList('ARRAY_LIST')
@@ -77,7 +77,7 @@ def updateCity(map, ufo):
 
 
 def updateTimeIndex(map, ufo):
-    ufotime = stringToDateFormat(ufo['datetime']).time()
+    ufotime = stringToDateTimeFormat(ufo['datetime']).time()
     entry = om.get(map, ufotime)
     if entry is None:
         datentry = lt.newList('ARRAY_LIST')
@@ -108,6 +108,15 @@ def sightingsPerHour(analyzer, minTime, maxTime):
     for time in lt.iterator(timeRange):
         time = sortCatalogLst(time, lt.size(time), cmpDatesLst)
         for sighting in lt.iterator(time):
+            lt.addLast(sightings, sighting)
+    return sightings
+
+def sightingsByDateRange(analyzer, minDate, maxDate):
+    sightings = lt.newList('ARRAY_LIST')
+    timeRange = om.values(analyzer['dateIndex'], stringToDateFormat(minDate).date(), stringToDateFormat(maxDate).date())
+    for date in lt.iterator(timeRange):
+        date = sortCatalogLst(date, lt.size(date), cmpTimesLst)
+        for sighting in lt.iterator(date):
             lt.addLast(sightings, sighting)
     return sightings
 
@@ -172,11 +181,11 @@ def cmpDates(date1, date2):
 
 def cmpDatesLst(date1, date2):
     'Return True if Date1 < Date2'
-    return stringToDateFormat(date1['datetime']).date() < stringToDateFormat(date2['datetime']).date()
+    return stringToDateTimeFormat(date1['datetime']).date() < stringToDateTimeFormat(date2['datetime']).date()
 
 def cmpTimesLst(date1, date2):
     'Return True if Date1 < Date2'
-    return stringToDateFormat(date1['datetime']).time() < stringToDateFormat(date2['datetime']).time()
+    return stringToDateTimeFormat(date1['datetime']).time() < stringToDateTimeFormat(date2['datetime']).time()
 
 def cmpStrings(str1, str2):
     if str1 == str2:
@@ -196,7 +205,7 @@ def sortCatalogLst(lst, size, parameter):
 
 # Funciones Auxiliares
 
-def stringToDateFormat(stringDate):
+def stringToDateTimeFormat(stringDate):
     if stringDate == '':
         return datetime.datetime.strptime(1,1,1,1,1,1)
     else:
@@ -207,3 +216,9 @@ def stringToTimeFormat(stringDate):
         return datetime.datetime.strptime(1,1,1,1,1,1)
     else:
         return datetime.datetime.strptime(stringDate, '%H:%M:%S')
+
+def stringToDateFormat(stringDate):
+    if stringDate == '':
+        return datetime.datetime.strptime(1,1,1,1,1,1)
+    else:
+        return datetime.datetime.strptime(stringDate, '%Y-%m-%d')

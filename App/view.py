@@ -71,7 +71,7 @@ def printReq1Results(sightingsList, city, cont):
 
 
 
-def printReq3Results(sightingsList):
+def printReq3and4Results(sightingsList):
     size = lt.size(sightingsList)
     i = size
     j = 1
@@ -88,6 +88,7 @@ def printReq3Results(sightingsList):
         print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'])
         i -= 1
         print()
+
 
 """
 Menu principal
@@ -114,15 +115,22 @@ while True:
 
     elif int(inputs[0]) == 3:
         pass
+
     elif int(inputs[0]) == 4:
         firstHour = input('Ingrese la primera hora: ')
         secondHour = input('Ingrese la segunda hora: ')
         sightingsPerHour = controller.sightingsPerHour(cont, firstHour, secondHour)
-        printReq3Results(sightingsPerHour)
+        printReq3and4Results(sightingsPerHour)
 
     elif int(inputs[0]) == 5:
-        pass
+        firstDate = input('Ingrese la primera fecha: ')
+        secondDate = input('Ingrese la segunda fecha: ')
+        sightingsByDateRange = controller.sightingsByDateRange(cont, firstDate, secondDate)
+        printReq3and4Results(sightingsByDateRange)
+
     elif int(inputs[0]) == 6:
+        pass
+    elif int(inputs[0]) == 7:
         pass
     else:
         sys.exit(0)

@@ -60,6 +60,10 @@ def sightingsPerHour(analyzer, minTime, maxTime):
     'Req 3'
     return model.sightingsPerHour(analyzer, minTime, maxTime)
 
+def sightingsByDateRange(analyzer, minDate, maxDate):
+    'req 4'
+    return model.sightingsByDateRange(analyzer, minDate, maxDate)
+
 def ufosSize(analyzer):
     """
     Numero de UFOS leidos
