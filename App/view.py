@@ -28,7 +28,10 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as omap
 from tabulate import tabulate
 assert cf
-
+import folium
+import matplotlib.pyplot as plt
+from IPython.display import display
+import numpy as np
 
 """
 La vista se encarga de la interacción con el usuario
@@ -50,6 +53,7 @@ def printMenu():
     print("4- Contar los avistamientos por Hora/Minutos del día")
     print("5- Contar los avistamientos en un rango de fechas")
     print("6- Contar los avistamientos de una Zona Geográfica")
+    print("7- Visualizar avistamientos de una zona geográfica")
     print("0- Salir")
     print("*******************************************")
 
@@ -182,6 +186,19 @@ while True:
         print("\nThe first 5 and last 5 UFO sightings in this time are: ")
         printLatitudLongitude(first_5, last_5)
 
+    elif int(inputs[0]) == 7:
+        long_min, long_max, lat_min, lat_max = map(float, input('Ingrese la longitud mínima, máxima, latitud mínima y máxima separadas por comas: ').split(','))
+        sightings_count, first_5, last_5 = controller.coordinates(catalog["coordinates"], long_min, long_max, lat_min, lat_max )
+        print("There are " + str(sightings_count) + " different UFO sightings in the current area.")
+        print("\nThe first 5 and last 5 UFO sightings in this time are: ")
+        printLatitudLongitude(first_5, last_5) 
+        map_sights = folium.Map(location=[np.mean([lat_max, lat_min]), np.mean([long_min, long_max])], zoom_start=6, tiles="Stamen Terrain")
+        tooltip = "OVNI!"
+        for sighting in lt.iterator(first_5):
+            folium.Marker(location=[sighting["latitude"], sighting["longitude"]], popup = sighting["city"].upper(), tooltip = tooltip).add_to(map_sights)
+        for sighting in lt.iterator(last_5):
+            folium.Marker(location=[sighting["latitude"], sighting["longitude"]], popup = sighting["city"].upper(), tooltip = tooltip).add_to(map_sights)
+        map_sights.save('ovnis.html')
     else:
         sys.exit(0)
 sys.exit(0)
