@@ -64,6 +64,10 @@ def sightingsByDateRange(analyzer, minDate, maxDate):
     'req 4'
     return model.sightingsByDateRange(analyzer, minDate, maxDate)
 
+def sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat):
+    'req 5'
+    return model.sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat)
+
 def ufosSize(analyzer):
     """
     Numero de UFOS leidos

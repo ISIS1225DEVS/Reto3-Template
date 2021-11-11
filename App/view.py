@@ -89,6 +89,23 @@ def printReq3and4Results(sightingsList):
         i -= 1
         print()
 
+def printReq5Results(sightingsList):
+    size = lt.size(sightingsList)
+    i = size
+    j = 1
+    print('El total de avistamientos en el rango es: ' + str(size))
+    print('Primeros 3: \n')
+    while j < 4:
+        sighting = lt.getElement(sightingsList ,j)
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'] + ' -Longitud: ' + str(sighting['longitude']) + ' -Latitud: ' + str(sighting['latitude']))
+        j += 1
+        print()
+    print('Ultimos 3: \n')
+    while i > size - 3:
+        sighting = lt.getElement(sightingsList ,i)
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'] + ' -Longitud: ' + str(sighting['longitude']) + ' -Latitud: ' + str(sighting['latitude']))
+        i -= 1
+        print()
 
 """
 Menu principal
@@ -129,7 +146,13 @@ while True:
         printReq3and4Results(sightingsByDateRange)
 
     elif int(inputs[0]) == 6:
-        pass
+        firstLong = round(float(input('Ingrese la primera longitud: ')),2)
+        secondLong = round(float(input('Ingrese la segunda longitud: ')),2)
+        firstLat = round(float(input('Ingrese la primera latitud: ')),2)
+        secondLat = round(float(input('Ingrese la segunda latitud: ')),2)
+        sightingsByLongitudeRange = controller.sightingsByLongitudeRange(cont, firstLong, secondLong, firstLat, secondLat)
+        printReq5Results(sightingsByLongitudeRange)
+
     elif int(inputs[0]) == 7:
         pass
     else:

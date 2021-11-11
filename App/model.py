@@ -42,6 +42,7 @@ def newAnalyzer():
     analyzer['city'] = om.newMap(omaptype = 'RBT', comparefunction = cmpStrings)
     #analyzer['durations(sec)'] = map
     analyzer['timeIndex'] = om.newMap(omaptype = 'RBT', comparefunction = cmpDates)
+    analyzer['longitude'] = om.newMap(omaptype = 'RBT', comparefunction = cmpLongitude)
     return analyzer
 
 # Funciones para agregar informacion al catalogo
@@ -50,7 +51,8 @@ def addUFO(analyzer, ufo):
     lt.addLast(analyzer['ufos'], ufo)
     updateDateIndex(analyzer['dateIndex'], ufo)
     updateTimeIndex(analyzer['timeIndex'], ufo)
-    updateCity(analyzer['city'], ufo)
+    updateCityIndex(analyzer['city'], ufo)
+    updateLongitudeIndex(analyzer['longitude'], ufo)
     return analyzer
 
 def updateDateIndex(map, ufo):
@@ -64,7 +66,7 @@ def updateDateIndex(map, ufo):
     lt.addLast(datentry, ufo)
     return map
 
-def updateCity(map, ufo):
+def updateCityIndex(map, ufo):
     entry = om.get(map, ufo['city'])
     if entry is None:
         datentry = lt.newList('ARRAY_LIST')
@@ -82,6 +84,19 @@ def updateTimeIndex(map, ufo):
     if entry is None:
         datentry = lt.newList('ARRAY_LIST')
         om.put(map, ufotime, datentry)
+    else:
+        datentry = me.getValue(entry)
+    lt.addLast(datentry, ufo)
+    return map
+
+def updateLongitudeIndex(map, ufo):
+    ufo['longitude'] = round(float(ufo['longitude']),2)
+    ufo['latitude'] = round(float(ufo['latitude']),2)
+    ufolongitude = round(float(ufo['longitude']),2)
+    entry = om.get(map, ufolongitude)
+    if entry is None:
+        datentry = lt.newList('ARRAY_LIST')
+        om.put(map, ufolongitude, datentry)
     else:
         datentry = me.getValue(entry)
     lt.addLast(datentry, ufo)
@@ -119,6 +134,17 @@ def sightingsByDateRange(analyzer, minDate, maxDate):
         for sighting in lt.iterator(date):
             lt.addLast(sightings, sighting)
     return sightings
+
+def sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat):
+    sightings = lt.newList('ARRAY_LIST')
+    longsRange = om.values(analyzer['longitude'], minLong, maxLong)
+    for long in lt.iterator(longsRange):
+        long = sortCatalogLst(long, lt.size(long), cmpLatitudeLst)
+        for sighting in lt.iterator(long):
+            if round(float(sighting['latitude']),2) >= minLat and round(float(sighting['latitude']),2) <= maxLat:
+                lt.addLast(sightings, sighting)
+    return sightings
+
 
 def ufosSize(analyzer):
     """
@@ -178,6 +204,20 @@ def cmpDates(date1, date2):
         return 1
     else:
         return -1
+
+def cmpLongitude(long1, long2):
+    """
+    Compara dos fechas
+    """
+    if round(float(long1),2) == round(float(long2),2):
+        return 0
+    elif round(float(long1),2) > round(float(long2),2):
+        return 1
+    else:
+        return -1
+
+def cmpLatitudeLst(lat1, lat2):
+    return round(float(lat1['latitude']),2) < round(float(lat2['latitude']),2)
 
 def cmpDatesLst(date1, date2):
     'Return True if Date1 < Date2'
