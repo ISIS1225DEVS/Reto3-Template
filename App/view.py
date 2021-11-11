@@ -197,6 +197,35 @@ while True:
         print('Los últimos 3 avistamientos en el rango son: ', )
         for a in ultimos:
             print(a)
+    elif int(inputs[0]) == 6:
+        min_long= str(round(float(input("Ingrese el mínimo de longitud: ")),2))
+        max_long= str(round(float(input("Ingrese el máximo de longitud: ")),2))
+        min_lat= round(float(input("Ingrese el mínimo de latitud: ")),2)
+        max_lat= round(float(input("Ingrese el máximo de latitud: ")),2)
+        info= controller.sightings_by_zone(catalog,min_long,max_long,min_lat,max_lat)
+        primeros = []
+        ultimos = []
+        print('El número de avistamientos en la zona geográfica son: ', info[1])
+        print('Los primeros cinco avistamientos son: ')
+        for j in lt.iterator(info[2]):
+            dict = {}
+            dict["datetime"]= j["datetime"]
+            dict["location"]= j["city"] + ", "+ j["country"]
+            dict["duration (secs.)"]= j["duration (seconds)"]
+            dict["shape"]= j["shape"]
+            primeros.append(dict)
+        for a in primeros:
+            print(a)
+        print('Los últimos 5 avistamientos son: ')
+        for j in lt.iterator(info[3]):
+            dict = {}
+            dict["datetime"]= j["datetime"]
+            dict["location"]= j["city"] + ", "+ j["country"]
+            dict["duration (secs.)"]= j["duration (seconds)"]
+            dict["shape"]= j["shape"]
+            ultimos.append(dict)
+        for a in ultimos:
+            print(a)
     else:
         sys.exit(0)
 sys.exit(0)

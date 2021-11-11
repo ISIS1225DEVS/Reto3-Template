@@ -82,3 +82,9 @@ def dates_in_range(catalog, lowdate, highdate):
 def size_in_range(lst):
     info = model.size_in_range(lst)
     return info
+
+#Requerimiento 5
+
+def sightings_by_zone(catalog,min_long,max_long,min_lat,max_lat):
+    info= model.sightings_by_zone(catalog,min_long,max_long,min_lat,max_lat)
+    return info

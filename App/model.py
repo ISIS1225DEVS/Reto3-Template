@@ -55,7 +55,7 @@ def InitCatalog():
     catalog['duration_UFO'] = om.newMap(omaptype='RBT', comparefunction= cmpSeconds)
     catalog['datetime_UFO'] = om.newMap(omaptype='RBT', comparefunction= cmpDate)
     catalog['hour_UFO'] = om.newMap(omaptype="RBT", comparefunction= cmpHour)
-    catalog['']
+    catalog['longitudes'] = om.newMap(omaptype="RBT", comparefunction= cmpFloats)
     catalog['cities'] = om.newMap(omaptype="RBT")
 
     return catalog
@@ -66,6 +66,7 @@ def addUFO(catalog, ufo_event):
     updateDuration(catalog['duration_UFO'], ufo_event)
     updateDatetime(catalog['datetime_UFO'], ufo_event)
     updateHour(catalog['hour_UFO'], ufo_event)
+    addLongitude(catalog['longitudes'], ufo_event)
     addCity(catalog['cities'], ufo_event)
 
 def updateDuration(orderedmap, ufo_event):
@@ -105,6 +106,18 @@ def updateHour(orderedmap, ufo_event):
         value_entry = me.getValue(time_entry)
         lt.addLast(value_entry, ufo_event)
     return orderedmap
+
+def addLongitude(map, ufo_event):
+    datalongitud = round(float(ufo_event["longitude"]),2)
+    entry = om.get(map, datalongitud)
+    if entry is None:
+        datentry = lt.newList('ARRAY_LIST')
+        om.put(map, datalongitud, datentry)
+    else:
+        datentry = me.getValue(entry)
+    lt.addLast(datentry,ufo_event)
+    return map
+
 def addCity(map, ufo_event):
     city= ufo_event["city"]
     if om.contains(map,city) == False:
@@ -191,6 +204,30 @@ def dates_in_range(orderedmap, lowdate, highdate):
         j += 1
     Ultimos = merge.sort(Ultimos, cmpDatetolst)
     return lst_range,Primeros,Ultimos
+
+#Requerimiento 5
+def sightings_by_zone(catalog,min_long,max_long,min_lat,max_lat):
+    data_tree = catalog["longitudes"]
+    mapas_latitud_en_rango = om.values(data_tree,min_long,max_long)
+    final_range_lst = lt.newList('ARRAY_LIST')
+    for data1 in lt.iterator(mapas_latitud_en_rango):
+        for data2 in lt.iterator(data1):
+            cmpdata = round(float(data2['latitude']),2)
+            if cmpdata >= min_lat and cmpdata <= max_lat:
+                lt.addLast(final_range_lst, data2)
+    final_range_lst = merge.sort(final_range_lst, cmpByDatetime)
+    sightings_size = size_in_range(final_range_lst)
+    sub_dates = lt.subList(final_range_lst,0,lt.size(final_range_lst)+1)
+    Primeros = lt.subList(final_range_lst,1,5)
+    Ultimos = lt.newList('ARRAY_LIST')
+    j = 0
+    while j < 5:
+        last = lt.removeLast(sub_dates)
+        lt.addLast(Ultimos, last)
+        j += 1
+    Ultimos = merge.sort(Ultimos, cmpByDatetime)
+    return final_range_lst, sightings_size, Primeros, Ultimos
+
 #Funciones generales
 #Para el número de avistamientos dentro del rango
 def size_in_range(lst):
