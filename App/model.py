@@ -47,9 +47,9 @@ def crearCatalogo():
 
                 }
 
-    catalog['casos'] = lt.newList('SINGLE_LINKED'),
-    catalog['dateIndex'] = om.newMap(omaptype='BST', comparefunction=compareDates),
-    catalog["horaMin"]= om.newMap(omaptype="RBT"),
+    catalog['casos'] = lt.newList('SINGLE_LINKED')
+    catalog['dateIndex'] = om.newMap(omaptype='BST', comparefunction=compareDates)
+    catalog["horaMin"]= om.newMap(omaptype="RBT")
     catalog["durations"]=om.newMap(omaptype="RBT")
 
     return catalog                                  
