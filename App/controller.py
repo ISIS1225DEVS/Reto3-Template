@@ -56,6 +56,10 @@ def sightingsByCity(analyzer, city):
    'Req 1'
    return model.sightingsByCity(analyzer, city)
 
+def sightingsByDuration(analyzer, minTime, maxTime):
+    'Req 2'
+    return model.sightingsByDuration(analyzer, minTime, maxTime)
+
 def ufosSize(analyzer):
     """
     Numero de UFOS leidos
