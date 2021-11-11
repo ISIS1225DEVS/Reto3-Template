@@ -43,13 +43,20 @@ def cargarCasos(catalog):
                                 delimiter=",")
     for caso in input_file:
         model.addCasos(catalog, caso)
-
+        model.addHoraMin(catalog, caso)
+        model.addDuration(catalog, caso)
 def cargarDatesIndex(catalog): 
     model.addDateIndex(catalog) 
 
 # Funciones de ordenamiento
 
+
+
 # Funciones de consulta sobre el catálogo
+
 def casosPorCiudad(catalog,ciudad):
     listR=model.casosPorCiudad(catalog,ciudad) 
     return listR 
+
+def sight_by_durationc(catalog,duraMin,duraMax):
+    return model.sight_by_duration(catalog,duraMin,duraMax)
