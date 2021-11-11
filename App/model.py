@@ -36,6 +36,7 @@ from datetime import date, datetime as dtime
 from DISClib.Algorithms.Trees import traversal
 import datetime
 import time
+import folium
 assert cf
 
 """
