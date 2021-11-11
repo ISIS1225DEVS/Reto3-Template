@@ -24,6 +24,7 @@ from typing import List
 import config as cf
 import sys
 import controller
+import pandas as pd
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as omap
 from tabulate import tabulate
@@ -193,11 +194,19 @@ while True:
         print("\nThe first 5 and last 5 UFO sightings in this time are: ")
         printLatitudLongitude(first_5, last_5) 
         map_sights = folium.Map(location=[np.mean([lat_max, lat_min]), np.mean([long_min, long_max])], zoom_start=6, tiles="Stamen Terrain")
+        folium.Rectangle([(lat_min,long_min), (lat_max,long_max)],
+                    color="blue",
+                    weight=2,
+                    fill=True,
+                    fill_color="blue",
+                    fill_opacity=0.1).add_to(map_sights)
         tooltip = "OVNI!"
         for sighting in lt.iterator(first_5):
-            folium.Marker(location=[sighting["latitude"], sighting["longitude"]], popup = sighting["city"].upper(), tooltip = tooltip).add_to(map_sights)
+            popup = "<b>City:</b> "+sighting["city"]+", \n<b>Datetime:</b> "+sighting["datetime"]+", \n<b>Duration [s]:</b> "+sighting["duration (seconds)"]+", \n<b>Shape:</b> "+sighting["shape"]
+            folium.Marker(location=[sighting["latitude"], sighting["longitude"]], popup = popup, tooltip = tooltip, icon=folium.Icon(color="orange", icon="map-marker")).add_to(map_sights)
         for sighting in lt.iterator(last_5):
-            folium.Marker(location=[sighting["latitude"], sighting["longitude"]], popup = sighting["city"].upper(), tooltip = tooltip).add_to(map_sights)
+            popup = "<b>City:</b> "+sighting["city"]+", \n<b>Datetime:</b> "+sighting["datetime"]+", \n<b>Duration [s]:</b> "+sighting["duration (seconds)"]+", \n<b>Shape:</b> "+sighting["shape"]
+            folium.Marker(location=[sighting["latitude"], sighting["longitude"]], popup = popup, tooltip = tooltip, icon=folium.Icon(color="orange", icon="map-marker")).add_to(map_sights)
         map_sights.save('ovnis.html')
     else:
         sys.exit(0)
