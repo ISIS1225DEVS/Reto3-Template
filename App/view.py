@@ -109,7 +109,7 @@ def printListsDatesByHour(list1, list2):
     print(tabulate(table1,headers, tablefmt="grid"))
 
 def printLatitudLongitude(list1, list2):
-    headers = ["datetime","time","city", "state", "country","shape","duration (seconds)"]
+    headers = ["datetime","city", "state", "country","shape","duration (seconds)", "latitude", "longitude"]
     table1 = []
     for sighting in lt.iterator(list1):
         table1.append([sighting["datetime"], sighting["city"],sighting["state"], sighting["country"],sighting["shape"],sighting["duration (seconds)"], sighting["latitude"], sighting["longitude"]])

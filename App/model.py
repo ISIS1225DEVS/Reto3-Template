@@ -168,6 +168,7 @@ def addCoordinates(catalog, sighting):
             lt.addLast(sighting_list, newsighting) #Se añade la información de dicho avistamiento
 
 # Funciones de consulta
+
 def largestCity(orderedmap):
     """Recorre la lista de llaves y obtiene la ciudad con mayor número de avistamientos
 
@@ -241,9 +242,8 @@ def seconds_range(orderedmap, lowlim, upper_lim):
         for duration in lt.iterator(map_list):
             merge.sort(duration, cmpDurationSeconds)
             total += lt.size(duration)
-        #print(map_list)
-        first_3 = getfirst3(map_list)
-        last_3 = getlast3(map_list)
+        first_3 = getKElements(map_list, 3, "first")
+        last_3 = getKElements(map_list, 3, "last")
     except:
         print("No hay avistamientos suficientes.")
     return total, first_3, last_3
@@ -289,13 +289,29 @@ def dates_rangeByHour(orderedmap, lowlim, upper_lim):
         for list in lt.iterator(value_lists):
             merge.sort(list, cmpSightByDate)
             value_size += lt.size(list)
-        first_3 = getfirst3(value_lists)
-        last_3 = getlast3(value_lists)
+        first_3 = getKElements(value_lists, 3, "first")
+        last_3 = getKElements(value_lists, 3, "last")
     except:
         print("No hay avistamientos suficientes.")
     return value_size, first_3, last_3
 
 def coordinates(orderedmap,long_min, long_max, lat_min, lat_max):
+    """Recibe un mapa ordenado con un valor mínimo y máximo tanto para longitud como latitud, 
+    se devuelve el número total de los avistamientos en dicho intervalo, asi como los 5 primeros 
+    y 5 últimos avistamientos
+
+    Args:
+        orderedmap (omap): Mapa ordenado por longitud
+        long_min (float): Valor mínimo de longitud
+        long_max (float): Valor máximo de longitud
+        lat_min (float): Valor mínimo de latitud
+        lat_max (floar): Valor máximo de latitud
+
+    Returns:
+        int: Número total de avistamientos
+        lst: Primeros 5 avistamientos
+        lst: Últimos 5 avistamientos
+    """     
     try:
         maps_list = omap.values(orderedmap, float(long_min), float(long_max)) # lista de mapas con longitudes en el rango dado
         contador = 0
@@ -305,13 +321,14 @@ def coordinates(orderedmap,long_min, long_max, lat_min, lat_max):
             for value in lt.iterator(coordinates_list):
                 contador += lt.size(value)
                 lt.addLast(list_sights, value)
-        first_5 = getfirst5(list_sights)
-        last_5 = getlast5(list_sights)
+        first_5 = getKElements(list_sights, 5, "first")
+        last_5 = getKElements(list_sights, 5, "last")
     except:
         print("Error en la función coordinates: model")
     return contador, first_5, last_5
 
 # Funciones utilizadas para comparar elementos dentro de una lista
+
 def cmpSightByDate(sight1, sight2):
     """Compara las fechas de 2 avistamientos
 
@@ -397,58 +414,44 @@ def formatDateByHour(date1):
     return datetime.datetime.strptime(date1, format)
 
 # Funciones auxiliares
-def getfirst3(map_lists):
-    contador = 0
-    first_3 = lt.newList("ARRAY_LIST")
-    for list in lt.iterator(map_lists):
-        for value in lt.iterator(list):
-            lt.addLast(first_3, value)
-            contador += 1
-            if contador == 3:
-                break
-        break
-    return first_3
+def getKElements(map_lists, k, subset):
+    """Toma k elementos ya sea al comienzo o al final de las listas que se encuentran en un mapa
 
-def getlast3(map_lists):
-    contador = 0
-    i = lt.size(map_lists)
-    last_3 = lt.newList("SINGLE_LINKED")
-    while contador < 3:
-        list = lt.getElement(map_lists, i)
-        j = lt.size(list)
-        while j > 0 and contador < 3:
-            value = lt.getElement(list, j)
-            lt.addFirst(last_3, value)
-            contador += 1
-            j -= 1
-        i -= 1
-    return last_3
+    Args:
+        map_lists (ARRAY_LIST): Lista que contiene la información de los avistamientos
+        k (int): Número de elementos que se quieren tomar
+        subset (str): Determinar si se quieren los primeros k elementos o los últimos
 
-def getfirst5(map_lists):
-    contador = 0
-    first_5 = lt.newList("ARRAY_LIST")
-    for list in lt.iterator(map_lists):
-        for value in lt.iterator(list):
-            lt.addLast(first_5, value)
-            contador += 1
-            if contador == 5:
-                break
-        break
-    return first_5
+    Returns:
+        lst: Lista con los elementos que se tomaron de acuerdo al subset y al k
+    """
+    if subset == "first":
+        contador = 0
+        first_k = lt.newList("ARRAY_LIST")
+        for list in lt.iterator(map_lists):
+            for value in lt.iterator(list):
+                lt.addLast(first_k, value)
+                contador += 1
+                if contador == k:
+                    break
+            break
+        return first_k
 
-def getlast5(map_lists):
-    contador = 0
-    i = lt.size(map_lists)
-    last_5 = lt.newList("SINGLE_LINKED")
-    while contador < 5:
-        list = lt.getElement(map_lists, i)
-        j = lt.size(list)
-        while j > 0 and contador < 5:
-            value = lt.getElement(list, j)
-            lt.addFirst(last_5, value)
-            contador += 1
-            j -= 1
-        i -= 1
-    return last_5
+    elif subset == "last":
+        contador = 0
+        i = lt.size(map_lists)
+        last_k = lt.newList("SINGLE_LINKED")
+        while contador < k:
+            list = lt.getElement(map_lists, i)
+            j = lt.size(list)
+            while j > 0 and contador < k:
+                value = lt.getElement(list, j)
+                lt.addFirst(last_k, value)
+                contador += 1
+                j -= 1
+            i -= 1
+        return last_k
+
+
         
 
