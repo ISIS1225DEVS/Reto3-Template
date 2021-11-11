@@ -47,6 +47,7 @@ def printMenu():
     print("4- Contar avistamientos por Hora/Minutos del día.")
     print("5- Contar los avistamientos en un rango de fechas.")
     print("6- Contar los avistamientos de una Zona Geográfica.")
+    print("7- Visualizar los avistamientos de una zona geográfica")
     print("0- Salir")
     print("********************************************")
 
@@ -154,7 +155,9 @@ while True:
         printReq5Results(sightingsByLongitudeRange)
 
     elif int(inputs[0]) == 7:
-        pass
+        locationMap = controller.sightingsByLongitudeRangeMap(sightingsByLongitudeRange)
+        locationMap
+
     else:
         sys.exit(0)
 sys.exit(0)

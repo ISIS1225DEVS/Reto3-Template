@@ -31,6 +31,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
 from DISClib.Algorithms.Sorting import mergesort as mgs
 import datetime
+import folium
 assert config
 
 # Construccion de modelos
@@ -145,6 +146,13 @@ def sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat):
                 lt.addLast(sightings, sighting)
     return sightings
 
+def sightingsByLongitudeRangeMap(sightings):
+    sighting1lon = lt.getElement(sightings, 1)['longitude']
+    sighting1lat = lt.getElement(sightings, 1)['latitude']
+    locationMap = folium.Map(location = [sighting1lon, sighting1lat])
+    for sighting in lt.iterator(sightings):
+        pass
+    return locationMap
 
 def ufosSize(analyzer):
     """

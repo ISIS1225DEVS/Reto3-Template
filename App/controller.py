@@ -68,6 +68,10 @@ def sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat):
     'req 5'
     return model.sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat)
 
+def sightingsByLongitudeRangeMap(sightings):
+    'req 6'
+    return model.sightingsByLongitudeRangeMap(sightings)
+
 def ufosSize(analyzer):
     """
     Numero de UFOS leidos
