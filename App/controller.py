@@ -56,6 +56,10 @@ def sightingsByCity(analyzer, city):
    'Req 1'
    return model.sightingsByCity(analyzer, city)
 
+def sightingsByDuration(analyzer, minTime, maxTime):
+    'Req 2'
+    return model.sightingsByDuration(analyzer, minTime, maxTime)
+  
 def sightingsPerHour(analyzer, minTime, maxTime):
     'Req 3'
     return model.sightingsPerHour(analyzer, minTime, maxTime)
@@ -71,6 +75,7 @@ def sightingsByLongitudeRange(analyzer, minLong, maxLong, minLat, maxLat):
 def sightingsByLongitudeRangeMap(sightings):
     'req 6'
     return model.sightingsByLongitudeRangeMap(sightings)
+
 
 def ufosSize(analyzer):
     """

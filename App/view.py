@@ -108,6 +108,28 @@ def printReq5Results(sightingsList):
         i -= 1
         print()
 
+def printReq2Rseults(minTime, maxTime, rtuple):
+    size = lt.size()
+    i = size
+    j = 1
+    size, ltSight= rtuple
+    print('Los datos presentan un total de', size, 'avistamientos cuyas duraciones tienen un valor entre', minTime, 'y', maxTime, 'segundos.')
+    while j < 4:
+        sighting = lt.getElement(ltSight ,j)
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'])
+        j += 1
+        print()
+    print('Ultimos 3: \n')
+    while i > size - 3:
+        sighting = lt.getElement( ltSight,i)
+        print(' -Fecha y Hora: ' + sighting['datetime'] + ' -Ciudad: ' + sighting['city'] + ' -Pais: ' + sighting['country'] + ' -Duracion(s): ' + sighting['duration (seconds)'] + ' -Forma: ' + sighting['shape'])
+        i -= 1
+        print()
+
+
+
+
+
 """
 Menu principal
 """
