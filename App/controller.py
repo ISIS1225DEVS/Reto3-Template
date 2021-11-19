@@ -34,6 +34,8 @@ def cargarDatos():
     catalogo=model.crearCatalogo()
     cargarCasos(catalogo)
     cargarDatesIndex(catalogo) 
+    cargarHoursIndex(catalogo)
+    cargarLongitudesIndex(catalogo)
     return catalogo 
 
 # Funciones para la carga de datos
@@ -48,7 +50,12 @@ def cargarCasos(catalog):
 def cargarDatesIndex(catalog): 
     model.addDateIndex(catalog) 
 
-# Funciones de ordenamiento
+def cargarHoursIndex(catalog):
+    model.addHoursIndex(catalog)
+
+def cargarLongitudesIndex(catalog):
+    model.addLongitudIndex(catalog)  
+
 
 
 
@@ -58,5 +65,21 @@ def casosPorCiudad(catalog,ciudad):
     listR=model.casosPorCiudad(catalog,ciudad) 
     return listR 
 
+
 def sight_by_durationc(catalog,duraMin,duraMax):
     return model.sight_by_duration(catalog,duraMin,duraMax)
+
+def casosPorHoras(catalog,rangoInferior,rangoSuperior):
+    listR=model.casosPorHoras(catalog,rangoInferior,rangoSuperior)
+    return listR     
+
+def casosPorFechas(catalog,rangoInferior,rangoSuperior):
+    listR=model.casosPorFechas(catalog,rangoInferior,rangoSuperior)          
+    return listR
+
+def casosPorArea(catalog,longitudMin,longitudMax,latitudMin,latitudMax):
+    listaOrdenadaPorLongitud=model.casosPorLongitud(catalog,longitudMin,longitudMax)
+    listaOrdenadaPorLatitud=model.casosPorLatitud(listaOrdenadaPorLongitud,latitudMin,latitudMax)
+    
+    return listaOrdenadaPorLatitud
+
