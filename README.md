@@ -32,8 +32,8 @@ This repository is part of the data structure and algorithms (#EDA) teaching fra
 
 The students edit this section to add their names, Uniandes emails, and specify which project functionality of the project they will implement.
 
-Req. 3 - Selig Rodriguez Jimenez, 202116407, s.rodriguezj2@uniandes.edu.co
-Req. 5 – Jhonny Armando Hortua Hoyola, 202111749, j.hortuao@uniandes.edu.co
+* Req. 3 - Selig Rodriguez Jimenez, 202116407, s.rodriguezj2@uniandes.edu.co
+* Req. 5 – Jhonny Armando Hortua Hoyola, 202111749, j.hortuao@uniandes.edu.co
 
 [Back to top](#challenge-template)
 
