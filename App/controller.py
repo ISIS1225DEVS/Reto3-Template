@@ -31,7 +31,30 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 # Inicialización del Catálogo de libros
 
+def initCatalog():
+    """
+    Llama la funcion de inicializacion del catalogo del modelo.
+    """
+    catalog = model.newAnalyzer()
+    return catalog
+
+
 # Funciones para la carga de datos
+def loadData(catalog,gamesfile,categoryfile):
+    """
+    Carga los datos de los archivos CSV en la
+    estructura de datos
+    """
+    gamesfile = cf.data_dir + gamesfile
+    categoryfile = cf.data_dir + categoryfile
+    
+    input_games_file = csv.DictReader(open(gamesfile, encoding="utf-8"),
+                                delimiter=",")
+
+    for game in input_games_file:
+        model.addGame(catalog, game)
+    
+    return catalog
 
 # Funciones de ordenamiento
 

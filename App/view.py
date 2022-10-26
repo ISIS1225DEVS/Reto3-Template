@@ -34,23 +34,49 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+gamefile = "Speedruns//game_data_utf-8-small.csv"
+categoryfile = "Speedruns//category_data_urf-8-small.csv"
+
+catalog = None
+
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Req 1")
+    print("3- Req 2")
+    print("4- Req 3")
+    print("5- Req 4")
+    print("6- Req 5")
+    print("7- Req 6")
+    print("8- Req 7")
 
-catalog = None
 
 """
 Menu principal
 """
+print("\nInicializando Catálogo ....")
+catalog = controller.initCatalog()
+    
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        controller.loadData(catalog,gamefile,categoryfile)
 
     elif int(inputs[0]) == 2:
+        pass
+    elif int(inputs[0]) == 3:
+        pass
+    elif int(inputs[0]) == 4:
+        pass
+    elif int(inputs[0]) == 5:
+        pass
+    elif int(inputs[0]) == 6:
+        pass
+    elif int(inputs[0]) == 7:
+        pass
+    elif int(inputs[0]) == 8:
         pass
 
     else:
