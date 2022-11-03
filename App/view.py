@@ -34,6 +34,9 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+default_limit = 1000
+sys.setrecursionlimit(default_limit*10)
+
 gamefile = "Speedruns//game_data_utf-8-small.csv"
 categoryfile = "Speedruns//category_data_urf-8-small.csv"
 

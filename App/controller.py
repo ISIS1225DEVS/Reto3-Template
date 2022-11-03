@@ -23,7 +23,7 @@
 import config as cf
 import model
 import csv
-
+csv.field_size_limit(2147483647)
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
