@@ -50,12 +50,19 @@ def loadData(catalog,gamesfile,categoryfile):
     
     input_games_file = csv.DictReader(open(gamesfile, encoding="utf-8"),
                                 delimiter=",")
+    input_category_file = csv.DictReader(open(categoryfile, encoding="utf-8"),delimiter=",")
 
     for game in input_games_file:
         model.addGame(catalog, game)
+
+    for record in input_category_file:
+        model.addRecord(catalog,record)
+        
     
     return catalog
 
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def pruebas(analyzer):
+    model.pruebas(analyzer)

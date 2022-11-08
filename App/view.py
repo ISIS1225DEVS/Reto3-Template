@@ -37,8 +37,8 @@ operación solicitada
 default_limit = 1000
 sys.setrecursionlimit(default_limit*10)
 
-gamefile = "Speedruns//game_data_utf-8-small.csv"
-categoryfile = "Speedruns//category_data_urf-8-small.csv"
+gamefile = "Speedruns//game_data_utf-8-large.csv"
+categoryfile = "Speedruns//category_data_urf-8-large.csv"
 
 catalog = None
 
@@ -66,6 +66,7 @@ while True:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
         controller.loadData(catalog,gamefile,categoryfile)
+        print("\nInformacion cargada exitosamente\n")
 
     elif int(inputs[0]) == 2:
         pass
@@ -81,7 +82,8 @@ while True:
         pass
     elif int(inputs[0]) == 8:
         pass
-
+    elif int(inputs[0])==9:
+        controller.pruebas(catalog)
     else:
         sys.exit(0)
 sys.exit(0)
