@@ -29,7 +29,7 @@ assert config
 import folium
 from folium.plugins import MarkerCluster
 from geopy.geocoders import Nominatim
-
+import os
 """
 En este archivo definimos los TADs que vamos a usar,
 es decir contiene los modelos con los datos en memoria
@@ -239,7 +239,7 @@ def newDateRecordEntry(record):
 
 def req1(analyzer,floor:str,ceiling:str):
 
-    #TODO: Poner data en la tabla y quitar prints
+    #TODO: Tabular y ordenar. Quitar prints
     floor = datetime.strptime(floor, '%Y-%m-%d')
     ceiling = datetime.strptime(ceiling, '%Y-%m-%d')
     
@@ -256,12 +256,13 @@ def req2(analyzer,player):
     res = (om.get(analyzer["playerRecord"],player)["value"]["lstrecords"])
     
     for k in lt.iterator(res):
-        #TODO: Crear las tablas con nombre juego y la demás info
+        #TODO: Tabular y ordenar
         id = k["Game_Id"]
         nombre_juego =m.get(analyzer["games"],id)["value"]["Name"]
         print(k+" "+nombre_juego)
 
 def req3(analyzer,floor,ceiling):
+    #TODO: tabular y ordenar
     keys = om.keySet(analyzer["triesRecord"])
     
     for key in lt.iterator(keys):
@@ -290,17 +291,4 @@ def pruebas(analyzer): #Esto solo son pruebaas
     mc.add_child(folium.Marker(location=(colombiaLoc.latitude,colombiaLoc.longitude),popup="Hola"))
     m.add_child(mc)
     m.save("./index.html")
-    
-    """floor = 21
-    celing = 75
-    keys = om.keySet(analyzer["triesRecord"])
-    
-    for key in lt.iterator(keys):
-        if (int(key) in range(floor,celing)):
-            print(key)
-            elements = om.get(analyzer["triesRecord"],key)["value"]["lstrecords"]
-            for element in lt.iterator(elements):
-                id = element["Game_Id"]
-                game_name = m.get(analyzer["games"],id)["value"]["Name"]
-                print(game_name)
-                print(element)"""
+    os.system("start ./index.html") #abre el mapa en el navegador
