@@ -69,6 +69,7 @@ def addGame(analyzer,game):
 def addRecord(analyzer,record):
     m.put(analyzer["records"],record['Game_Id'],record)
     updateRecordDate(analyzer["dateRecord"],record)
+    updatePlayerRecord(analyzer["playerRecord"],record)
     return analyzer
 
 
@@ -87,6 +88,21 @@ def updateDateGame(map,game):
         dateEntry = me.getValue(entry)
 
     addDateGameIndex(dateEntry,game)
+    
+    return map
+
+def updatePlayerRecord(map,record):
+    players = record["Players_0"].split(",")
+    players  = [x.strip() for x in players]
+    for player in players:
+        entry = om.get(map,player)
+        if entry is None:
+            playerEntry = newPlayerRecordEntry(record)
+            om.put(map,player,playerEntry)
+        else:
+            playerEntry = me.getValue(entry)
+
+        addPlayerRecordIndex(playerEntry,record)
     
     return map
 
@@ -122,6 +138,22 @@ def addDateGameIndex(dateEntry,game):
     
     return gameEntry
 
+def addPlayerRecordIndex(playerEntry,record):
+    lst = playerEntry["lstrecords"]
+    lt.addLast(lst,record)
+    recordsIndex = playerEntry["recordsIndex"]
+    
+    recordEntry = m.get(recordsIndex, record["Game_Id"])
+    if (recordEntry is None):
+         entry = newRecordEntry(record["Game_Id"], record)
+         lt.addLast(entry["lstrecords"], record)
+         m.put(recordsIndex, record["Game_Id"], entry)
+    else:
+         entry = me.getValue(recordEntry)
+         lt.addLast(entry["lstrecords"], record)
+    
+    return recordEntry
+
 def addDateRecordIndex(dateEntry,record):
     lst = dateEntry["lstrecords"]
     lt.addLast(lst,record)
@@ -145,6 +177,12 @@ def newGameEntry(gameMap,game):
     lt.addLast(entry["lstgames"],game)
     return entry
 
+def newPlayerRecordEntry(record):
+    entry = {"recordsIndex":m.newMap(numelements=40,maptype='PROBING'),
+            "lstrecords":lt.newList('SINGLE_LINKED')   }
+    lt.addLast(entry["lstrecords"],record)
+    return entry
+
 def newRecordEntry(recordMap,record):
     entry = {"recordsIndex":recordMap,
             "lstrecords":lt.newList('SINGLE_LINKED')   }
@@ -163,7 +201,14 @@ def newDateRecordEntry(record):
     lt.addLast(entry["lstrecords"],record)
     return entry
 
+def req2(analyzer):
+    res = (om.get(analyzer["playerRecord"],'Brendanplays121')["value"]["lstrecords"])
+
+    for k in lt.iterator(res):
+        print(k)
+
 def pruebas(analyzer):
-    cosas = (om.get(analyzer["dateGame"],datetime.strptime('15-12-01',"%y-%m-%d"))["value"]["lstgames"])
+    cosas = (om.get(analyzer["playerRecord"],'Brendanplays121')["value"]["lstrecords"])
+
     for k in lt.iterator(cosas):
         print(k)
