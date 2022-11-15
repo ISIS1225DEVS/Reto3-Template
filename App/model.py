@@ -54,7 +54,7 @@ def newAnalyzer():
     """
     analyzer = {"games":m.newMap(numelements=40,maptype='PROBING'),
                 "dateGame":om.newMap('RBT'),
-                "tries":om.newMap('RBT'),
+                "triesGame":om.newMap('RBT'),
                 "records":m.newMap(numelements=40,maptype='PROBING'),
                 "dateRecord":om.newMap('RBT'),
                 "playerRecord":om.newMap('RBT')
@@ -62,12 +62,20 @@ def newAnalyzer():
     return analyzer
 
 def addGame(analyzer,game):
+
     m.put(analyzer["games"],game['Game_Id'],game)
     updateDateGame(analyzer["dateGame"],game)
+    updateGameTries(analyzer["triesGame"],game)
     return analyzer
 
 def addRecord(analyzer,record):
-    m.put(analyzer["records"],record['Game_Id'],record)
+    if m.contains(analyzer["records"],record["Game_Id"]):
+        listRecord = m.get(analyzer["records"],record["Game_Id"])["value"]
+    else:
+        listRecord = lt.newList('SINGLE_LINKED')
+    lt.addLast(listRecord,record)    
+
+    m.put(analyzer["records"],record['Game_Id'],listRecord)
     updateRecordDate(analyzer["dateRecord"],record)
     updatePlayerRecord(analyzer["playerRecord"],record)
     return analyzer
@@ -90,7 +98,18 @@ def updateDateGame(map,game):
     addDateGameIndex(dateEntry,game)
     
     return map
+def updateGameTries(map,game):
+    gameTries = game["Total_Runs"]
+    entry = om.get(map,gameTries)
+    if entry is None:
+        triesEntry = newGameTriesEntry(game)
+        om.put(map,gameTries,triesEntry)
+    else:
+        triesEntry = me.getValue(entry)
 
+    addGameTriesIndex(triesEntry,game)
+    
+    return map
 def updatePlayerRecord(map,record):
     players = record["Players_0"].split(",")
     players  = [x.strip() for x in players]
@@ -126,6 +145,22 @@ def addDateGameIndex(dateEntry,game):
     lst = dateEntry["lstgames"]
     lt.addLast(lst,game)
     gamesIndex = dateEntry["gamesIndex"]
+    
+    gameEntry = m.get(gamesIndex, game["Game_Id"])
+    if (gameEntry is None):
+         entry = newGameEntry(game["Game_Id"], game)
+         lt.addLast(entry["lstgames"], game)
+         m.put(gamesIndex, game["Game_Id"], entry)
+    else:
+         entry = me.getValue(gameEntry)
+         lt.addLast(entry["lstgames"], game)
+    
+    return gameEntry
+
+def addGameTriesIndex(triesEntry,game):
+    lst = triesEntry["lstgames"]
+    lt.addLast(lst,game)
+    gamesIndex = triesEntry["gamesIndex"]
     
     gameEntry = m.get(gamesIndex, game["Game_Id"])
     if (gameEntry is None):
@@ -183,6 +218,12 @@ def newPlayerRecordEntry(record):
     lt.addLast(entry["lstrecords"],record)
     return entry
 
+def newGameTriesEntry(game):
+    entry = {"gamesIndex":m.newMap(numelements=40,maptype='PROBING'),
+            "lstgames":lt.newList('SINGLE_LINKED')   }
+    lt.addLast(entry["lstgames"],game)
+    return entry
+
 def newRecordEntry(recordMap,record):
     entry = {"recordsIndex":recordMap,
             "lstrecords":lt.newList('SINGLE_LINKED')   }
@@ -200,15 +241,40 @@ def newDateRecordEntry(record):
             "lstrecords":lt.newList('SINGLE_LINKED')   }
     lt.addLast(entry["lstrecords"],record)
     return entry
-
+def req1(analyzer):
+    pass
 def req2(analyzer):
+    #FIXME: El nombre del jugador llega por parametro
     res = (om.get(analyzer["playerRecord"],'Brendanplays121')["value"]["lstrecords"])
-
+    
     for k in lt.iterator(res):
-        print(k)
+        #TODO: Crear las tablas con nombre juego y la demás info
+        id = k["Game_Id"]
+        nombre_juego =m.get(analyzer["games"],id)["value"]["Name"]
+        print(k+" "+nombre_juego)
+
+def req3(analyzer):
+    #Aqui se sacan los juegos con x intentos
+    #FIXME: Esto esta sacando todos sin tener en cuenta los rangos. Hay que hacer que solo tome de los rangos
+    res = om.get(analyzer["triesGame"],"236")["value"]["lstgames"]
+    for k in lt.iterator(res):
+        id = k["Game_Id"]
+        records = m.get(analyzer["records"],id)["value"]
+        for record in lt.iterator(records):
+            #TODO: Sacar los datos de cada record y graficar      
+            print(record)
+def bono(analyzer):
+    pass
 
 def pruebas(analyzer):
-    cosas = (om.get(analyzer["playerRecord"],'Brendanplays121')["value"]["lstrecords"])
-
-    for k in lt.iterator(cosas):
-        print(k)
+    #Aqui se sacan los juegos con x intentos
+    res = om.get(analyzer["triesGame"],"236")["value"]["lstgames"]
+    for k in lt.iterator(res):
+        id = k["Game_Id"]
+        records = m.get(analyzer["records"],id)["value"]
+        for record in lt.iterator(records):
+            #TODO: Sacar los datos de cada record y graficar      
+            print(record)
+    #res = (om.get(analyzer["triesGames"],'Brendanplays121')["value"]["lstrecords"])    
+    ###for k in lt.iterator(res):
+    #   print(k)
