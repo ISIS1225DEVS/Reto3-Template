@@ -42,7 +42,8 @@ tablas de simbolos.
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-
+#TODO: Funciones de ordenamiento
+#TODO: Agregar funciones de ordenar otras cosas
 def newAnalyzer():
     """ Inicializa el analizador
 
