@@ -52,7 +52,7 @@ def printMenu():
     print("6- Req 5")
     print("7- Req 6")
     print("8- Req 7")
-
+    print("9- Req 8 (Bono)")
 
 """
 Menu principal
@@ -83,7 +83,9 @@ while True:
         pass
     elif int(inputs[0]) == 8:
         pass
-    elif int(inputs[0])==9:
+    elif int(inputs[0]) == 9:
+        pass
+    elif int(inputs)==10:
         controller.pruebas(catalog)
     else:
         sys.exit(0)

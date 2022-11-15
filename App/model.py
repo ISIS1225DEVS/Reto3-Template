@@ -241,7 +241,10 @@ def newDateRecordEntry(record):
             "lstrecords":lt.newList('SINGLE_LINKED')   }
     lt.addLast(entry["lstrecords"],record)
     return entry
+
 def req1(analyzer):
+    #TODO:Implementar
+    #Seleccionar del arbol de dateGames 
     pass
 def req2(analyzer):
     #FIXME: El nombre del jugador llega por parametro
@@ -266,7 +269,7 @@ def req3(analyzer):
 def bono(analyzer):
     pass
 
-def pruebas(analyzer):
+def pruebas(analyzer): #Esto solo son pruebaas
     #Aqui se sacan los juegos con x intentos
     res = om.get(analyzer["triesGame"],"236")["value"]["lstgames"]
     for k in lt.iterator(res):
