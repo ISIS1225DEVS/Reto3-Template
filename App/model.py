@@ -26,6 +26,9 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
 from datetime import datetime
 assert config
+import folium
+from folium.plugins import MarkerCluster
+from geopy.geocoders import Nominatim
 
 """
 En este archivo definimos los TADs que vamos a usar,
@@ -55,10 +58,10 @@ def newAnalyzer():
     """
     analyzer = {"games":m.newMap(numelements=40,maptype='PROBING'),
                 "dateGame":om.newMap('RBT'),
-                "triesGame":om.newMap('RBT'),
                 "records":m.newMap(numelements=40,maptype='PROBING'),
                 "dateRecord":om.newMap('RBT'),
-                "playerRecord":om.newMap('RBT')
+                "playerRecord":om.newMap('RBT'),
+                "triesRecord":om.newMap('RBT')
                 }
     return analyzer
 
@@ -66,17 +69,12 @@ def addGame(analyzer,game):
 
     m.put(analyzer["games"],game['Game_Id'],game)
     updateDateGame(analyzer["dateGame"],game)
-    updateGameTries(analyzer["triesGame"],game)
     return analyzer
 
 def addRecord(analyzer,record):
-    if m.contains(analyzer["records"],record["Game_Id"]):
-        listRecord = m.get(analyzer["records"],record["Game_Id"])["value"]
-    else:
-        listRecord = lt.newList('SINGLE_LINKED')
-    lt.addLast(listRecord,record)    
+    m.put(analyzer["records"],record["Game_Id"],record)
 
-    m.put(analyzer["records"],record['Game_Id'],listRecord)
+    updateRecordTries(analyzer["triesRecord"],record)
     updateRecordDate(analyzer["dateRecord"],record)
     updatePlayerRecord(analyzer["playerRecord"],record)
     return analyzer
@@ -95,20 +93,18 @@ def updateDateGame(map,game):
         om.put(map,gameDate,dateEntry)
     else:
         dateEntry = me.getValue(entry)
-
-    addDateGameIndex(dateEntry,game)
+        addDateGameIndex(dateEntry,game)
     
     return map
-def updateGameTries(map,game):
-    gameTries = game["Total_Runs"]
-    entry = om.get(map,gameTries)
+def updateRecordTries(map,record):
+    recordTries = record["Num_Runs"]
+    entry = om.get(map,recordTries)
     if entry is None:
-        triesEntry = newGameTriesEntry(game)
-        om.put(map,gameTries,triesEntry)
+        triesEntry = newRecordTriesEntry(record)
+        om.put(map,recordTries,triesEntry)
     else:
         triesEntry = me.getValue(entry)
-
-    addGameTriesIndex(triesEntry,game)
+        addRecordTriesIndex(triesEntry,record)
     
     return map
 def updatePlayerRecord(map,record):
@@ -121,8 +117,7 @@ def updatePlayerRecord(map,record):
             om.put(map,player,playerEntry)
         else:
             playerEntry = me.getValue(entry)
-
-        addPlayerRecordIndex(playerEntry,record)
+            addPlayerRecordIndex(playerEntry,record)
     
     return map
 
@@ -137,8 +132,7 @@ def updateRecordDate(map,record):
         om.put(map,recordDate,dateEntry)
     else:
         dateEntry = me.getValue(entry)
-
-    addDateRecordIndex(dateEntry,record)
+        addDateRecordIndex(dateEntry,record)
     
     return map
 
@@ -150,29 +144,29 @@ def addDateGameIndex(dateEntry,game):
     gameEntry = m.get(gamesIndex, game["Game_Id"])
     if (gameEntry is None):
          entry = newGameEntry(game["Game_Id"], game)
-         lt.addLast(entry["lstgames"], game)
          m.put(gamesIndex, game["Game_Id"], entry)
     else:
          entry = me.getValue(gameEntry)
          lt.addLast(entry["lstgames"], game)
+         m.put(gamesIndex, game["Game_Id"], entry)
     
     return gameEntry
 
-def addGameTriesIndex(triesEntry,game):
-    lst = triesEntry["lstgames"]
-    lt.addLast(lst,game)
-    gamesIndex = triesEntry["gamesIndex"]
+def addRecordTriesIndex(triesEntry,record):
+    lst = triesEntry["lstrecords"]
+    lt.addLast(lst,record)
+    recordsIndex = triesEntry["recordsIndex"]
     
-    gameEntry = m.get(gamesIndex, game["Game_Id"])
-    if (gameEntry is None):
-         entry = newGameEntry(game["Game_Id"], game)
-         lt.addLast(entry["lstgames"], game)
-         m.put(gamesIndex, game["Game_Id"], entry)
+    recordEntry = m.get(recordsIndex, record["Game_Id"])
+    if (recordEntry is None):
+         entry = newRecordEntry(record["Game_Id"], record)
+
+         m.put(recordsIndex, record["Game_Id"], entry)
     else:
-         entry = me.getValue(gameEntry)
-         lt.addLast(entry["lstgames"], game)
+         entry = me.getValue(recordEntry)
+         lt.addLast(entry["lstrecords"], record)
     
-    return gameEntry
+    return recordEntry
 
 def addPlayerRecordIndex(playerEntry,record):
     lst = playerEntry["lstrecords"]
@@ -182,7 +176,7 @@ def addPlayerRecordIndex(playerEntry,record):
     recordEntry = m.get(recordsIndex, record["Game_Id"])
     if (recordEntry is None):
          entry = newRecordEntry(record["Game_Id"], record)
-         lt.addLast(entry["lstrecords"], record)
+
          m.put(recordsIndex, record["Game_Id"], entry)
     else:
          entry = me.getValue(recordEntry)
@@ -198,7 +192,7 @@ def addDateRecordIndex(dateEntry,record):
     recordEntry = m.get(recordsIndex, record["Game_Id"])
     if (recordEntry is None):
          entry = newRecordEntry(record["Game_Id"], record)
-         lt.addLast(entry["lstrecords"], record)
+
          m.put(recordsIndex, record["Game_Id"], entry)
     else:
          entry = me.getValue(recordEntry)
@@ -219,10 +213,10 @@ def newPlayerRecordEntry(record):
     lt.addLast(entry["lstrecords"],record)
     return entry
 
-def newGameTriesEntry(game):
-    entry = {"gamesIndex":m.newMap(numelements=40,maptype='PROBING'),
-            "lstgames":lt.newList('SINGLE_LINKED')   }
-    lt.addLast(entry["lstgames"],game)
+def newRecordTriesEntry(record):
+    entry = {"recordsIndex":m.newMap(numelements=40,maptype='PROBING'),
+            "lstrecords":lt.newList('SINGLE_LINKED')   }
+    lt.addLast(entry["lstrecords"],record)
     return entry
 
 def newRecordEntry(recordMap,record):
@@ -243,13 +237,23 @@ def newDateRecordEntry(record):
     lt.addLast(entry["lstrecords"],record)
     return entry
 
-def req1(analyzer):
-    #TODO:Implementar
-    #Seleccionar del arbol de dateGames 
-    pass
-def req2(analyzer):
-    #FIXME: El nombre del jugador llega por parametro
-    res = (om.get(analyzer["playerRecord"],'Brendanplays121')["value"]["lstrecords"])
+def req1(analyzer,floor:str,ceiling:str):
+
+    #TODO: Poner data en la tabla y quitar prints
+    floor = datetime.strptime(floor, '%Y-%m-%d')
+    ceiling = datetime.strptime(ceiling, '%Y-%m-%d')
+    
+    keys = om.keySet(analyzer["dateGame"])
+    for key in lt.iterator(keys):
+        if key >= floor and key <= ceiling:
+            elements = (om.get(analyzer["dateGame"],key))['value']['lstgames']
+            print("\n")
+            print(key.strftime("%Y-%m-%d"))
+            for element in lt.iterator(elements):
+                print(element)
+
+def req2(analyzer,player):
+    res = (om.get(analyzer["playerRecord"],player)["value"]["lstrecords"])
     
     for k in lt.iterator(res):
         #TODO: Crear las tablas con nombre juego y la demás info
@@ -257,28 +261,46 @@ def req2(analyzer):
         nombre_juego =m.get(analyzer["games"],id)["value"]["Name"]
         print(k+" "+nombre_juego)
 
-def req3(analyzer):
-    #Aqui se sacan los juegos con x intentos
-    #FIXME: Esto esta sacando todos sin tener en cuenta los rangos. Hay que hacer que solo tome de los rangos
-    res = om.get(analyzer["triesGame"],"236")["value"]["lstgames"]
-    for k in lt.iterator(res):
-        id = k["Game_Id"]
-        records = m.get(analyzer["records"],id)["value"]
-        for record in lt.iterator(records):
-            #TODO: Sacar los datos de cada record y graficar      
-            print(record)
+def req3(analyzer,floor,ceiling):
+    keys = om.keySet(analyzer["triesRecord"])
+    
+    for key in lt.iterator(keys):
+        if (int(key) in range(floor,ceiling)):
+            print(key)
+            elements = om.get(analyzer["triesRecord"],key)["value"]["lstrecords"]
+            for element in lt.iterator(elements):
+                id = element["Game_Id"]
+                game_name = m.get(analyzer["games"],id)["value"]["Name"]
+                print(game_name)
+                print(element)
+                
 def bono(analyzer):
     pass
 
 def pruebas(analyzer): #Esto solo son pruebaas
-    #Aqui se sacan los juegos con x intentos
-    res = om.get(analyzer["triesGame"],"236")["value"]["lstgames"]
-    for k in lt.iterator(res):
-        id = k["Game_Id"]
-        records = m.get(analyzer["records"],id)["value"]
-        for record in lt.iterator(records):
-            #TODO: Sacar los datos de cada record y graficar      
-            print(record)
-    #res = (om.get(analyzer["triesGames"],'Brendanplays121')["value"]["lstrecords"])    
-    ###for k in lt.iterator(res):
-    #   print(k)
+    #Con esto se saca la localizacion del pais solo con el nombre
+    locator = Nominatim(user_agent="myLocator")
+    colombiaLoc = locator.geocode("Colombia")
+    brasilLoc = locator.geocode("Brasil")
+    #aqui se genera el mapa
+    m=folium.Map()
+    #crear un mc para cada pais (un for puede ser buena idea)
+    mc = MarkerCluster()
+    mc.add_child(folium.Marker(location=(colombiaLoc.latitude,colombiaLoc.longitude),popup="Hola"))
+    mc.add_child(folium.Marker(location=(colombiaLoc.latitude,colombiaLoc.longitude),popup="Hola"))
+    m.add_child(mc)
+    m.save("./index.html")
+    
+    """floor = 21
+    celing = 75
+    keys = om.keySet(analyzer["triesRecord"])
+    
+    for key in lt.iterator(keys):
+        if (int(key) in range(floor,celing)):
+            print(key)
+            elements = om.get(analyzer["triesRecord"],key)["value"]["lstrecords"]
+            for element in lt.iterator(elements):
+                id = element["Game_Id"]
+                game_name = m.get(analyzer["games"],id)["value"]["Name"]
+                print(game_name)
+                print(element)"""

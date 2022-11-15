@@ -85,7 +85,7 @@ while True:
         pass
     elif int(inputs[0]) == 9:
         pass
-    elif int(inputs)==10:
+    elif int(inputs[0])==0:
         controller.pruebas(catalog)
     else:
         sys.exit(0)
