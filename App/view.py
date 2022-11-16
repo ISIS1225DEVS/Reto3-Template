@@ -69,12 +69,19 @@ while True:
         print("\nInformacion cargada exitosamente\n")
 
     elif int(inputs[0]) == 2:
-        print("Ejecutando opcion 2")
-        controller.req2(catalog)
+        print("Ejecutando requerimiento 1")
+        floor = input("Escriba la fecha inicial: ")
+        ceiling = input("Escriba la fecha final: ")
+        controller.req1(catalog,floor,ceiling)
     elif int(inputs[0]) == 3:
-        pass
+        print("Ejecutando requerimiento 2")
+        player = input("Escriba el nombre del jugador: ")
+        controller.req2(catalog,player)
     elif int(inputs[0]) == 4:
-        pass
+        print("Ejecutando requerimiento 3")
+        floor = input("Escriba el numero menor de intentos: ")
+        ceiling = input("Escriba el numero mayor de intentos: ")
+        controller.req3(catalog,floor,ceiling)
     elif int(inputs[0]) == 5:
         pass
     elif int(inputs[0]) == 6:

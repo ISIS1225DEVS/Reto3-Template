@@ -30,6 +30,7 @@ import folium
 from folium.plugins import MarkerCluster
 from geopy.geocoders import Nominatim
 import os
+from tabulate import tabulate
 """
 En este archivo definimos los TADs que vamos a usar,
 es decir contiene los modelos con los datos en memoria
@@ -239,42 +240,67 @@ def newDateRecordEntry(record):
 
 def req1(analyzer,floor:str,ceiling:str):
 
-    #TODO: Tabular y ordenar. Quitar prints
+    #TODO: Sacar solo los 3 primeros y 3 ultimos y ordenar
+    INNER_TABLE_HEADERS = ["Total_Runs","Name","Abbreviation","Platforms","Genres"]
     floor = datetime.strptime(floor, '%Y-%m-%d')
     ceiling = datetime.strptime(ceiling, '%Y-%m-%d')
-    
     keys = om.keySet(analyzer["dateGame"])
+    principal_table = []
     for key in lt.iterator(keys):
         if key >= floor and key <= ceiling:
+            date = key.strftime("%Y-%m-%d")
             elements = (om.get(analyzer["dateGame"],key))['value']['lstgames']
-            print("\n")
-            print(key.strftime("%Y-%m-%d"))
+            count = str(lt.size(elements))
+
+            inside_table = []
             for element in lt.iterator(elements):
-                print(element)
+                inside_table.append([element["Total_Runs"],element["Name"],element["Abbreviation"],element["Platforms"],element["Genres"]])
+            tabla_interna = tabulate(inside_table,headers=INNER_TABLE_HEADERS,tablefmt="grid",maxcolwidths=8)
+            principal_table.append([date,count,tabla_interna])
+    print(tabulate(principal_table,headers=["Date","Count","Details"],tablefmt="grid",maxcolwidths=[10,6,None]))
 
 def req2(analyzer,player):
     res = (om.get(analyzer["playerRecord"],player)["value"]["lstrecords"])
-    
-    for k in lt.iterator(res):
-        #TODO: Tabular y ordenar
-        id = k["Game_Id"]
-        nombre_juego =m.get(analyzer["games"],id)["value"]["Name"]
-        print(k+" "+nombre_juego)
+    table_data = []
+    headers_tabla = ["Time_0","Record_Date_0","Name","Players_0","Country_0","Num_Runs","Platforms","Genres","Category","Subcategory"]
+    for element in lt.iterator(res):
+        #TODO: ordenar, sacar solo primeros 3 y ultimos 3
+        id = element["Game_Id"]
+        game_info = m.get(analyzer["games"],id)["value"]
+        nombre_juego =game_info["Name"]
+        platforms = game_info["Platforms"]
+        genres = game_info["Genres"]
+        data_para_agregar =[ element["Time_0"],element["Record_Date_0"],nombre_juego,element["Players_0"],
+            element["Country_0"],element["Num_Runs"],platforms,genres,element["Category"],element["Subcategory"]]
+        data_para_agregar = ['Unknown' if x == '' else x for x in data_para_agregar]
+        table_data.append(data_para_agregar)
+        
+    print(tabulate(table_data,headers=headers_tabla,tablefmt="grid",maxcolwidths=[10,20,10,10,10,10,10,10,10,10]))
 
 def req3(analyzer,floor,ceiling):
-    #TODO: tabular y ordenar
+    #TODO: ordenar y mostrar primeros 3 y ultimos 3
+    INNER_TABLE_HEADERS = ["Time_0","Record_Date_0","Name","Players_0","Country_0"
+                            ,"Platforms","Genres","Category","Subcategory","Release_Date"]
     keys = om.keySet(analyzer["triesRecord"])
-    
+    principal_table = []
     for key in lt.iterator(keys):
         if (int(key) in range(floor,ceiling)):
-            print(key)
             elements = om.get(analyzer["triesRecord"],key)["value"]["lstrecords"]
+            count = lt.size(elements)
+            inside_table = []
             for element in lt.iterator(elements):
-                id = element["Game_Id"]
-                game_name = m.get(analyzer["games"],id)["value"]["Name"]
-                print(game_name)
-                print(element)
-                
+                id = element["Game_Id"] 
+                game_info = m.get(analyzer["games"],id)["value"]
+                game_name = game_info["Name"]
+                platforms = game_info["Platforms"]
+                genres = game_info["Genres"]
+                release_date = game_info["Release_Date"]
+                inside_table.append([element["Time_0"],element["Record_Date_0"],game_name,element["Players_0"],
+                element["Country_0"],platforms,genres,element["Category"],element["Subcategory"],release_date])
+            tabla_interna = tabulate(inside_table,headers=INNER_TABLE_HEADERS,tablefmt="grid",maxcolwidths=8)
+            principal_table.append([key,count,tabla_interna])
+    print(tabulate(principal_table,headers=["Tries","Count","Details"],tablefmt="grid",maxcolwidths=[8,6,None]))
+            
 def bono(analyzer):
     pass
 
