@@ -91,7 +91,9 @@ while True:
     elif int(inputs[0]) == 8:
         pass
     elif int(inputs[0]) == 9:
-        pass
+        print("Ejecutando requerimiento 8 - bono")
+        release_year = input("Ingresa el anio a buscar: ")
+        controller.bono(catalog,release_year)
     elif int(inputs[0])==0:
         controller.pruebas(catalog)
     else:

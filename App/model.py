@@ -46,8 +46,6 @@ tablas de simbolos.
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-#TODO: Funciones de ordenamiento
-#TODO: Agregar funciones de ordenar otras cosas
 def newAnalyzer():
     """ Inicializa el analizador
 
@@ -58,11 +56,12 @@ def newAnalyzer():
     Retorna el analizador inicializado.
     """
     analyzer = {"games":m.newMap(numelements=40,maptype='PROBING'),
-                "dateGame":om.newMap('RBT'),
+                "dateGame":om.newMap('RBT',comparefunction=compareDates),
                 "records":m.newMap(numelements=40,maptype='PROBING'),
-                "dateRecord":om.newMap('RBT'),
-                "playerRecord":om.newMap('RBT'),
-                "triesRecord":om.newMap('RBT')
+                "dateRecord":om.newMap('RBT',comparefunction=compareDates),
+                "playerRecord":om.newMap('RBT',comparefunction=comparePlayers),
+                "triesRecord":om.newMap('RBT',comparefunction=compareTries),
+                "countriesRecord":om.newMap('RBT',comparefunction=compareCountries)
                 }
     return analyzer
 
@@ -73,11 +72,17 @@ def addGame(analyzer,game):
     return analyzer
 
 def addRecord(analyzer,record):
-    m.put(analyzer["records"],record["Game_Id"],record)
+    if m.contains(analyzer["records"],record["Game_Id"]):   
+        records = m.get(analyzer["records"],record["Game_Id"])['value']
+    else:
+        records = lt.newList('SINGLE_LINKED')
+    lt.addLast(records,record)
+    m.put(analyzer["records"],record["Game_Id"],records)
 
     updateRecordTries(analyzer["triesRecord"],record)
     updateRecordDate(analyzer["dateRecord"],record)
     updatePlayerRecord(analyzer["playerRecord"],record)
+    updateCountriesRecord(analyzer["countriesRecord"],record)
     return analyzer
 
 
@@ -137,6 +142,21 @@ def updateRecordDate(map,record):
     
     return map
 
+def updateCountriesRecord(map,record):
+    countries = record["Country_0"].split(",")
+    countries  = [x.strip() for x in countries]
+    for country in countries:
+        entry = om.get(map,country)
+        if entry is None:
+            countryEntry = newCountryRecordEntry(record)
+            om.put(map,country,countryEntry)
+        else:
+            countryEntry = me.getValue(entry)
+            addCountryRecordIndex(countryEntry,record)
+    
+    return map
+
+
 def addDateGameIndex(dateEntry,game):
     lst = dateEntry["lstgames"]
     lt.addLast(lst,game)
@@ -167,6 +187,19 @@ def addRecordTriesIndex(triesEntry,record):
          entry = me.getValue(recordEntry)
          lt.addLast(entry["lstrecords"], record)
     
+    return recordEntry
+
+def addCountryRecordIndex(countryEntry,record):
+    lst = countryEntry["lstrecords"]
+    lt.addLast(lst,record)
+    recordsIndex = countryEntry["recordsIndex"]
+    recordEntry = m.get(recordsIndex, record["Game_Id"])
+    if (recordEntry is None):
+        entry = newRecordEntry(record["Game_Id"], record)
+        m.put(recordsIndex, record["Game_Id"], entry)
+    else:
+        entry = me.getValue(recordEntry)
+        lt.addLast(entry["lstrecords"], record)
     return recordEntry
 
 def addPlayerRecordIndex(playerEntry,record):
@@ -214,6 +247,13 @@ def newPlayerRecordEntry(record):
     lt.addLast(entry["lstrecords"],record)
     return entry
 
+def newCountryRecordEntry(record):
+    entry = {"recordsIndex":m.newMap(numelements=40,maptype='PROBING'),
+            "lstrecords":lt.newList('SINGLE_LINKED')   }
+    lt.addLast(entry["lstrecords"],record)
+    return entry
+
+
 def newRecordTriesEntry(record):
     entry = {"recordsIndex":m.newMap(numelements=40,maptype='PROBING'),
             "lstrecords":lt.newList('SINGLE_LINKED')   }
@@ -240,7 +280,6 @@ def newDateRecordEntry(record):
 
 def req1(analyzer,floor:str,ceiling:str):
 
-    #TODO: Sacar solo los 3 primeros y 3 ultimos y ordenar
     INNER_TABLE_HEADERS = ["Total_Runs","Name","Abbreviation","Platforms","Genres"]
     floor = datetime.strptime(floor, '%Y-%m-%d')
     ceiling = datetime.strptime(ceiling, '%Y-%m-%d')
@@ -257,6 +296,7 @@ def req1(analyzer,floor:str,ceiling:str):
                 inside_table.append([element["Total_Runs"],element["Name"],element["Abbreviation"],element["Platforms"],element["Genres"]])
             tabla_interna = tabulate(inside_table,headers=INNER_TABLE_HEADERS,tablefmt="grid",maxcolwidths=8)
             principal_table.append([date,count,tabla_interna])
+    if len(principal_table)>6:principal_table=principal_table[:3]+principal_table[-3:]
     print(tabulate(principal_table,headers=["Date","Count","Details"],tablefmt="grid",maxcolwidths=[10,6,None]))
 
 def req2(analyzer,player):
@@ -264,7 +304,6 @@ def req2(analyzer,player):
     table_data = []
     headers_tabla = ["Time_0","Record_Date_0","Name","Players_0","Country_0","Num_Runs","Platforms","Genres","Category","Subcategory"]
     for element in lt.iterator(res):
-        #TODO: ordenar, sacar solo primeros 3 y ultimos 3
         id = element["Game_Id"]
         game_info = m.get(analyzer["games"],id)["value"]
         nombre_juego =game_info["Name"]
@@ -274,15 +313,17 @@ def req2(analyzer,player):
             element["Country_0"],element["Num_Runs"],platforms,genres,element["Category"],element["Subcategory"]]
         data_para_agregar = ['Unknown' if x == '' else x for x in data_para_agregar]
         table_data.append(data_para_agregar)
+    
+    if len(table_data)>6:table_data=table_data[:3]+table_data[-3:]
         
     print(tabulate(table_data,headers=headers_tabla,tablefmt="grid",maxcolwidths=[10,20,10,10,10,10,10,10,10,10]))
 
 def req3(analyzer,floor,ceiling):
-    #TODO: ordenar y mostrar primeros 3 y ultimos 3
     INNER_TABLE_HEADERS = ["Time_0","Record_Date_0","Name","Players_0","Country_0"
                             ,"Platforms","Genres","Category","Subcategory","Release_Date"]
     keys = om.keySet(analyzer["triesRecord"])
     principal_table = []
+    
     for key in lt.iterator(keys):
         if (int(key) in range(floor,ceiling)):
             elements = om.get(analyzer["triesRecord"],key)["value"]["lstrecords"]
@@ -299,22 +340,77 @@ def req3(analyzer,floor,ceiling):
                 element["Country_0"],platforms,genres,element["Category"],element["Subcategory"],release_date])
             tabla_interna = tabulate(inside_table,headers=INNER_TABLE_HEADERS,tablefmt="grid",maxcolwidths=8)
             principal_table.append([key,count,tabla_interna])
+    if len(principal_table) > 6:
+        principal_table=principal_table[:3]+principal_table[-3:]
     print(tabulate(principal_table,headers=["Tries","Count","Details"],tablefmt="grid",maxcolwidths=[8,6,None]))
             
-def bono(analyzer):
-    pass
-
-def pruebas(analyzer): #Esto solo son pruebaas
-    #Con esto se saca la localizacion del pais solo con el nombre
-    locator = Nominatim(user_agent="myLocator")
-    colombiaLoc = locator.geocode("Colombia")
-    brasilLoc = locator.geocode("Brasil")
-    #aqui se genera el mapa
-    m=folium.Map()
-    #crear un mc para cada pais (un for puede ser buena idea)
+def bono(analyzer,release_year):
+#    print(om.keySet(analyzer["countriesRecord"]))
+    var=0
+    locator = Nominatim(user_agent="myGeocoder")
+    m = folium.Map(location=[0,0],zoom_start=2)
     mc = MarkerCluster()
-    mc.add_child(folium.Marker(location=(colombiaLoc.latitude,colombiaLoc.longitude),popup="Hola"))
-    mc.add_child(folium.Marker(location=(colombiaLoc.latitude,colombiaLoc.longitude),popup="Hola"))
+    for key in lt.iterator(om.keySet(analyzer["dateGame"])):
+        current_year = key.strftime("%Y")
+        if current_year==release_year:
+            elements = om.get(analyzer["dateGame"],key)["value"]["lstgames"]
+  
+            for element in lt.iterator(elements): #Da todos los juegos que cumplen con el año de release
+                records = om.get(analyzer["records"],element["Game_Id"])["value"]#Saca los records de los juegos que cumplen la condicion
+                
+                for record in lt.iterator(records):
+                    countries = record["Country_0"].split(",")
+                    for country in countries:
+                        country = country.strip()
+
+                        loc = locator.geocode(country)
+                        
+                        mc.add_child(folium.Marker(location=[loc.latitude,loc.longitude],popup=record["Country_0"]))
     m.add_child(mc)
-    m.save("./index.html")
-    os.system("start ./index.html") #abre el mapa en el navegador
+    m.save("./map.html")
+    os.system("start map.html")
+
+def compareDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 < date2):
+        return 1
+    else:
+        return -1
+
+def comparePlayers(player1, player2):
+    """
+    Compara dos nombres de jugadores
+    """
+    if (player1 == player2):
+        return 0
+    elif (player1 > player2):
+        return 1
+    else:
+        return -1
+
+def compareTries(tries1, tries2):
+    """
+    Compara dos cantitades de intentos
+    """
+    if (tries1 == tries2):
+        return 0
+    elif (tries1 > tries2):
+        return 1
+    else:
+        return -1
+
+def compareCountries(country1, country2):
+    """
+    Compara dos nombres de países
+    """
+    if (country1 == country2):
+        return 0
+    elif (country1 > country2):
+        return 1
+    else:
+        return -1
+
